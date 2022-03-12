@@ -42,8 +42,8 @@
                 a $ :a state
                 b $ :b state
                 y $ :y state
-                unit 8
-                size 12
+                unit 6
+                size 16
                 left-p $ [] 30 40 50
                 right-p $ [] 40 40 50
                 y-p $ [] 60 40 60
@@ -88,7 +88,7 @@
                   range $ .floor a
                   map $ fn (level)
                     group ({}) &
-                      -> (range-around size)
+                      -> (range size)
                         map $ fn (idx)
                           let
                               x $ * unit idx
@@ -109,7 +109,7 @@
                           let
                               x $ * unit idx
                             spline $ {}
-                              :points $ -> (range-around size)
+                              :points $ -> (range size)
                                 map $ fn (j)
                                   let
                                       z $ * unit j
