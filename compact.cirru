@@ -9,7 +9,7 @@
       :ns $ quote
         ns app.comp.container $ :require
           quatrefoil.alias :refer $ group box sphere point-light ambient-light perspective-camera scene text spline
-          quatrefoil.core :refer $ defcomp >>
+          quatrefoil.core :refer $ defcomp >> hslx
           quatrefoil.comp.control :refer $ comp-value
           quatrefoil.math :refer $ &q* q*
       :defs $ {}
@@ -38,16 +38,16 @@
             let
                 cursor $ :cursor states
                 state $ or (:data states)
-                  {} (:left-n 15) (:right-n 0) (:y 0)
-                left-n $ :left-n state
-                right-n $ :right-n state
+                  {} (:a 12) (:b 0.045) (:y 0)
+                a $ :a state
+                b $ :b state
                 y $ :y state
-                unit 6
-                size 16
-                left-p $ [] 40 40 60
-                right-p $ [] 50 40 60
+                unit 8
+                size 12
+                left-p $ [] 30 40 50
+                right-p $ [] 40 40 50
                 y-p $ [] 60 40 60
-                angle $ * &PI 0.0375
+                angle $ * &PI b
                 q $ [] (sin angle) 0 0 (cos angle)
                 q' $ []
                   negate $ sin angle
@@ -55,25 +55,25 @@
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
                   :position $ [] -10 20 0
-                comp-value left-n left-p 0.8 ([] 0 200) 0xccaaff $ fn (v d!)
-                  d! cursor $ assoc state :left-n v
-                comp-value right-n right-p 0.8 ([] 0 200) 0xccaaff $ fn (v d!)
-                  d! cursor $ assoc state :right-n v
-                comp-value y y-p 0.8 ([] 0 200) 0xccaaff $ fn (v d!)
+                comp-value a left-p 0.6 ([] 0 20) 0xccaaff $ fn (v d!)
+                  d! cursor $ assoc state :a v
+                comp-value b right-p 0.001 ([] 0 1) 0xccaaff $ fn (v d!)
+                  d! cursor $ assoc state :b v
+                ; comp-value y y-p 0.8 ([] 0 200) 0xccaaff $ fn (v d!)
                   d! cursor $ assoc state :y v
                 text $ {}
-                  :text $ .!toFixed left-n 1
+                  :text $ .!toFixed a 1
                   :position left-p
                   :size 4
                   :height 0.5
                   :material material-object
                 text $ {}
-                  :text $ .!toFixed right-n 1
+                  :text $ .!toFixed b 4
                   :position right-p
                   :size 4
                   :height 0.5
                   :material material-object
-                text $ {}
+                ; text $ {}
                   :text $ .!toFixed y 1
                   :position y-p
                   :size 4
@@ -85,7 +85,7 @@
                   :scale $ [] 1 1 1
                   :material material-object
                 , & $ ->
-                  range $ .floor left-n
+                  range $ .floor a
                   map $ fn (level)
                     group ({}) &
                       -> (range-around size)
@@ -101,7 +101,8 @@
                                     left-times level q $ [] x y z 0
                               :position $ [] 0 0 0
                               :scale $ [] 1 1 1
-                              :material material-object
+                              :material $ assoc material-object :color
+                                hslx (* level 60) 50 60
                       , & $ ->
                         range (negate size) 1
                         map $ fn (idx)
@@ -115,7 +116,8 @@
                                     left-times level q $ [] z y x 0
                               :position $ [] 0 0 0
                               :scale $ [] 1 1 1
-                              :material material-object
+                              :material $ assoc material-object :color
+                                hslx (* level 60) 50 60
         |material-object $ quote
           def material-object $ {} (:kind :mesh-basic) (:color 0xafdff5) (:opacity 0.8) (:transparent true)
         |material-line $ quote
