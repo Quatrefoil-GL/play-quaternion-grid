@@ -38,20 +38,20 @@
             let
                 cursor $ :cursor states
                 state $ or (:data states)
-                  w-log $ {} (:left-n 0) (:right-n 0) (:y 0)
+                  {} (:left-n 15) (:right-n 0) (:y 0)
                 left-n $ :left-n state
                 right-n $ :right-n state
                 y $ :y state
-                unit 10
-                size 8
+                unit 6
+                size 16
                 left-p $ [] 40 40 60
                 right-p $ [] 50 40 60
                 y-p $ [] 60 40 60
-                angle $ * &PI 0.002
-                q $ [] 0 (sin angle) 0 (cos angle)
-                q' $ [] 0
+                angle $ * &PI 0.0375
+                q $ [] (sin angle) 0 0 (cos angle)
+                q' $ []
                   negate $ sin angle
-                  , 0 (cos angle)
+                  , 0 0 (cos angle)
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
                   :position $ [] -10 20 0
@@ -84,33 +84,38 @@
                   :rotation $ [] 0 0 0
                   :scale $ [] 1 1 1
                   :material material-object
-                group ({}) &
-                  -> (range-around size)
-                    map $ fn (idx)
-                      let
-                          x $ * unit idx
-                        spline $ {}
-                          :points $ -> (range-around size)
-                            map $ fn (j)
-                              let
-                                  z $ * unit j
-                                left-times (.floor left-n) q $ [] x y z 0
-                          :position $ [] 0 0 0
-                          :scale $ [] 1 1 1
-                          :material material-object
-                  , & $ -> (range-around size)
-                    map $ fn (idx)
-                      let
-                          x $ * unit idx
-                        spline $ {}
-                          :points $ -> (range-around size)
-                            map $ fn (j)
-                              let
-                                  z $ * unit j
-                                left-times (.floor left-n) q $ [] z y x
-                          :position $ [] 0 0 0
-                          :scale $ [] 1 1 1
-                          :material material-object
+                , & $ ->
+                  range $ .floor left-n
+                  map $ fn (level)
+                    group ({}) &
+                      -> (range-around size)
+                        map $ fn (idx)
+                          let
+                              x $ * unit idx
+                            spline $ {}
+                              :points $ ->
+                                range (negate size) 1
+                                map $ fn (j)
+                                  let
+                                      z $ * unit j
+                                    left-times level q $ [] x y z 0
+                              :position $ [] 0 0 0
+                              :scale $ [] 1 1 1
+                              :material material-object
+                      , & $ ->
+                        range (negate size) 1
+                        map $ fn (idx)
+                          let
+                              x $ * unit idx
+                            spline $ {}
+                              :points $ -> (range-around size)
+                                map $ fn (j)
+                                  let
+                                      z $ * unit j
+                                    left-times level q $ [] z y x 0
+                              :position $ [] 0 0 0
+                              :scale $ [] 1 1 1
+                              :material material-object
         |material-object $ quote
           def material-object $ {} (:kind :mesh-basic) (:color 0xafdff5) (:opacity 0.8) (:transparent true)
         |material-line $ quote
