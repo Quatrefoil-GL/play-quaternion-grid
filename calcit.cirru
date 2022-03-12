@@ -1,8 +1,8 @@
 
 {}
-  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:compact-output? true) (:storage-key |calcit.cirru) (:version |0.0.4)
-    :modules $ [] |touch-control/ |pointed-prompt/ |quatrefoil.calcit/
-    :init-fn |app.main/main!
+  :users $ {}
+    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:password |)
+    |-pxyJ-2j $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |-pxyJ-2j) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
   :ir $ {} (:package |app)
     :files $ {}
       |app.comp.container $ {}
@@ -1191,12 +1191,20 @@
                 :at 1583600289679
                 :by nil
                 :id |o5g1usrQuVO
-              |u $ {}
+              |u $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095117389)
                 :data $ {}
-                  |T $ {} (:text |load-console-formatter!) (:type :leaf) (:at 1620023814866) (:by |-pxyJ-2j)
-                :type :expr
-                :at 1620023808542
-                :by |-pxyJ-2j
+                  |T $ {}
+                    :data $ {}
+                      |T $ {} (:text |load-console-formatter!) (:type :leaf) (:at 1620023814866) (:by |-pxyJ-2j)
+                    :type :expr
+                    :at 1620023808542
+                    :by |-pxyJ-2j
+                  |D $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095149659) (:text |when)
+                  |L $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095124385) (:text |dev?)
+                  |b $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095150808)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095151638) (:text |println)
+                      |b $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095156294) (:text "|\"Run in dev mode")
               |w $ {}
                 :data $ {}
                   |T $ {} (:text |inject-tree-methods) (:type :leaf) (:at 1634439939379) (:by |-pxyJ-2j)
@@ -1621,6 +1629,13 @@
                   :at 1583600289679
                   :by nil
                   :id |hFiLFSKsEaZ
+                |z $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095160262)
+                  :data $ {}
+                    |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095162506) (:text |app.config)
+                    |b $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095163409) (:text |:refer)
+                    |h $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095163654)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095164391) (:text |dev?)
               :type :expr
               :at 1583600289679
               :by nil
@@ -1629,6 +1644,26 @@
           :at 1583600289679
           :by nil
           :id |t5qdMpEc3Tn
-  :users $ {}
-    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:password |)
-    |-pxyJ-2j $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |-pxyJ-2j) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+      |app.config $ {}
+        :ns $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095054175)
+          :data $ {}
+            |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095054175) (:text |ns)
+            |b $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095054175) (:text |app.config)
+        :defs $ {}
+          |dev? $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095058296)
+            :data $ {}
+              |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095061235) (:text |def)
+              |b $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095058296) (:text |dev?)
+              |h $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095058296)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095064133) (:text |=)
+                  |b $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095066639) (:text "|\"dev")
+                  |h $ {} (:type :expr) (:by |-pxyJ-2j) (:at 1647095067117)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095068097) (:text |get-env)
+                      |b $ {} (:type :leaf) (:by |-pxyJ-2j) (:at 1647095070861) (:text "|\"mode")
+        :configs $ {}
+  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:compact-output? true) (:storage-key |calcit.cirru) (:version |0.0.4)
+    :modules $ [] |touch-control/ |pointed-prompt/ |quatrefoil/
+    :init-fn |app.main/main!
+  :entries $ {}

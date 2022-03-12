@@ -3,6 +3,7 @@
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |touch-control/ |pointed-prompt/ |quatrefoil/
     :version |0.0.4
+  :entries $ {}
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -73,12 +74,15 @@
           "\"mobile-detect" :default mobile-detect
           "\"bottom-tip" :default hud!
           "\"./calcit.build-errors" :default build-errors
+          app.config :refer $ dev?
       :defs $ {}
         |render-app! $ quote
           defn render-app! () (; println "|Render app:")
             render-canvas! (comp-container @*store) dispatch!
         |main! $ quote
-          defn main! () (load-console-formatter!) (inject-tree-methods)
+          defn main! ()
+            when dev? (load-console-formatter!) (println "\"Run in dev mode")
+            inject-tree-methods
             let
                 canvas-el $ js/document.querySelector |canvas
               init-renderer! canvas-el $ {} (:background 0x110022)
@@ -110,3 +114,8 @@
               println "|Code updated."
         |mobile? $ quote
           def mobile? $ .!mobile (new mobile-detect js/window.navigator.userAgent)
+    |app.config $ {}
+      :ns $ quote (ns app.config)
+      :defs $ {}
+        |dev? $ quote
+          def dev? $ = "\"dev" (get-env "\"mode")
