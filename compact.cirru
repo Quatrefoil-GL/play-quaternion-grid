@@ -55,12 +55,21 @@
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
                   :position $ [] -10 20 0
-                comp-value a left-p 0.6 ([] 0 20) 0xccaaff $ fn (v d!)
-                  d! cursor $ assoc state :a v
-                comp-value b right-p 0.001 ([] 0 1) 0xccaaff $ fn (v d!)
-                  d! cursor $ assoc state :b v
-                comp-value c y-p 0.6 ([] 0 20) 0xccaaff $ fn (v d!)
-                  d! cursor $ assoc state :c v
+                comp-value
+                  {} (:value a) (:position left-p) (:speed 0.6) (:color 0xccaaff)
+                    :bound $ [] 0 20
+                  fn (v d!)
+                    d! cursor $ assoc state :a v
+                comp-value
+                  {} (:value b) (:position right-p) (:speed 0.001) (:color 0xccaaff)
+                    :bound $ [] 0 1
+                  fn (v d!)
+                    d! cursor $ assoc state :b v
+                comp-value
+                  {} (:value c) (:position y-p) (:speed 0.6) (:color 0xccaaff)
+                    :bound $ [] 0 20
+                  fn (v d!)
+                    d! cursor $ assoc state :c v
                 text $ {}
                   :text $ .!toFixed a 1
                   :position left-p
