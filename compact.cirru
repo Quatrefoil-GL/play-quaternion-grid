@@ -8,7 +8,7 @@
     |app.comp.container $ {}
       :ns $ quote
         ns app.comp.container $ :require
-          quatrefoil.alias :refer $ group box sphere point-light ambient-light perspective-camera scene text spline
+          quatrefoil.alias :refer $ group box sphere point-light ambient-light perspective-camera scene text spline mesh-line
           quatrefoil.core :refer $ defcomp >> hslx
           quatrefoil.comp.control :refer $ comp-value
           quatrefoil.math :refer $ &q* q*
@@ -92,7 +92,7 @@
                         map $ fn (idx)
                           let
                               x $ * unit idx
-                            spline $ {}
+                            mesh-line $ {}
                               :points $ ->
                                 range (negate size) 1
                                 map $ fn (j)
@@ -101,15 +101,14 @@
                                       a $ .floor a
                                     left-times (&min level a) (- level a) q q' $ [] x 0 z 0
                               :position $ [] 0 0 0
-                              :scale $ [] 1 1 1
-                              :material $ assoc material-object :color
+                              :material $ assoc material-mesh-line :color
                                 hslx (* level 60) 50 60
                       , & $ ->
                         range (negate size) 1
                         map $ fn (idx)
                           let
                               x $ * unit idx
-                            spline $ {}
+                            mesh-line $ {}
                               :points $ -> (range size)
                                 map $ fn (j)
                                   let
@@ -118,7 +117,7 @@
                                     left-times (&min level a) (- level a) q q' $ [] z 0 x 0
                               :position $ [] 0 0 0
                               :scale $ [] 1 1 1
-                              :material $ assoc material-object :color
+                              :material $ assoc material-mesh-line :color
                                 hslx (* level 60) 50 60
         |material-object $ quote
           def material-object $ {} (:kind :mesh-basic) (:color 0xafdff5) (:opacity 0.8) (:transparent true)
@@ -132,6 +131,8 @@
             if (<= n 0)
               if (<= m 0) v $ recur n (dec m) q q' (&q* v q')
               recur (dec n) m q q' $ &q* q v
+        |material-mesh-line $ quote
+          def material-mesh-line $ {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 1) (:depthTest true) (:lineWidth 0.4)
     |app.updater $ {}
       :ns $ quote
         ns app.updater $ :require
