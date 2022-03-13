@@ -38,15 +38,15 @@
             let
                 cursor $ :cursor states
                 state $ or (:data states)
-                  {} (:a 12) (:b 0.045) (:y 0)
+                  {} (:a 12) (:b 0.045) (:c 0)
                 a $ :a state
                 b $ :b state
-                y $ :y state
+                c $ :c state
                 unit 6
                 size 16
-                left-p $ [] 30 40 50
-                right-p $ [] 40 40 50
-                y-p $ [] 60 40 60
+                left-p $ [] 110 60 50
+                right-p $ [] 120 40 50
+                y-p $ [] 110 50 50
                 angle $ * &PI b
                 q $ [] (sin angle) 0 0 (cos angle)
                 q' $ []
@@ -59,8 +59,8 @@
                   d! cursor $ assoc state :a v
                 comp-value b right-p 0.001 ([] 0 1) 0xccaaff $ fn (v d!)
                   d! cursor $ assoc state :b v
-                ; comp-value y y-p 0.8 ([] 0 200) 0xccaaff $ fn (v d!)
-                  d! cursor $ assoc state :y v
+                comp-value c y-p 0.6 ([] 0 20) 0xccaaff $ fn (v d!)
+                  d! cursor $ assoc state :c v
                 text $ {}
                   :text $ .!toFixed a 1
                   :position left-p
@@ -73,8 +73,8 @@
                   :size 4
                   :height 0.5
                   :material material-object
-                ; text $ {}
-                  :text $ .!toFixed y 1
+                text $ {}
+                  :text $ .!toFixed c 1
                   :position y-p
                   :size 4
                   :height 0.5
@@ -85,7 +85,7 @@
                   :scale $ [] 1 1 1
                   :material material-object
                 , & $ ->
-                  range $ .floor a
+                  range $ + (.floor a) (.floor c)
                   map $ fn (level)
                     group ({}) &
                       -> (range size)
@@ -98,7 +98,8 @@
                                 map $ fn (j)
                                   let
                                       z $ * unit j
-                                    left-times level q $ [] x y z 0
+                                      a $ .floor a
+                                    left-times (&min level a) (- level a) q q' $ [] x 0 z 0
                               :position $ [] 0 0 0
                               :scale $ [] 1 1 1
                               :material $ assoc material-object :color
@@ -113,7 +114,8 @@
                                 map $ fn (j)
                                   let
                                       z $ * unit j
-                                    left-times level q $ [] z y x 0
+                                      a $ .floor a
+                                    left-times (&min level a) (- level a) q q' $ [] z 0 x 0
                               :position $ [] 0 0 0
                               :scale $ [] 1 1 1
                               :material $ assoc material-object :color
@@ -126,8 +128,10 @@
           defn range-around (n)
             range (negate n) (inc n)
         |left-times $ quote
-          defn left-times (n q v)
-            if (<= n 0) v $ recur (dec n) q (&q* v q)
+          defn left-times (n m q q' v)
+            if (<= n 0)
+              if (<= m 0) v $ recur n (dec m) q q' (&q* v q')
+              recur (dec n) m q q' $ &q* q v
     |app.updater $ {}
       :ns $ quote
         ns app.updater $ :require
