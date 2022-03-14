@@ -8,8 +8,10 @@
     |app.comp.container $ {}
       :ns $ quote
         ns app.comp.container $ :require
-          quatrefoil.alias :refer $ group box sphere point-light ambient-light perspective-camera scene text
-          quatrefoil.core :refer $ defcomp >>
+          quatrefoil.alias :refer $ group box sphere point-light ambient-light perspective-camera scene text spline mesh-line
+          quatrefoil.core :refer $ defcomp >> hslx
+          quatrefoil.comp.control :refer $ comp-value
+          quatrefoil.math :refer $ &q* q*
       :defs $ {}
         |comp-container $ quote
           defcomp comp-container (store)
@@ -25,35 +27,121 @@
                   :near 0.1
                   :far 1000
                   :position $ [] 0 0 100
-                comp-demo
+                comp-playground $ >> states :playground
                 ambient-light $ {} (:color 0x666666)
                 ; point-light $ {} (:color 0xffffff) (:intensity 1.4) (:distance 200)
                   :position $ [] 20 40 50
                 ; point-light $ {} (:color 0xffffff) (:intensity 2) (:distance 200)
                   :position $ [] 0 60 0
-        |comp-demo $ quote
-          defcomp comp-demo () $ group ({})
-            box $ {} (:width 16) (:height 4) (:depth 6)
-              :position $ [] -40 0 0
-              :material $ {} (:kind :mesh-lambert) (:color 0x808080) (:opacity 0.6)
-              :event $ {}
-                :click $ fn (e d!) (d! :demo nil)
-            sphere $ {} (:radius 8)
-              :position $ [] 10 0 0
-              :material $ {} (:kind :mesh-lambert) (:opacity 0.6) (:color 0x9050c0)
-              :event $ {}
-                :click $ fn (e d!) (d! :canvas nil)
-            group ({})
-              text $ {} (:text |Quatrefoil) (:size 4) (:height 2)
-                :position $ [] -30 0 20
-                :material $ {} (:kind :mesh-lambert) (:color 0xffcccc)
-            sphere $ {} (:radius 4) (:emissive 0xffffff) (:metalness 0.8) (:color 0x00ff00) (:emissiveIntensity 1) (:roughness 0)
-              :position $ [] -10 20 0
-              :material $ {} (:kind :mesh-basic) (:color 0xffff55) (:opacity 0.8) (:transparent true)
-              :event $ {}
-                :click $ fn (e d!) (d! :canvas nil)
-            point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
-              :position $ [] -10 20 0
+        |comp-playground $ quote
+          defn comp-playground (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} (:a 12) (:b 0.045) (:c 0)
+                a $ :a state
+                b $ :b state
+                c $ :c state
+                unit 6
+                size 16
+                left-p $ [] 110 60 50
+                right-p $ [] 120 40 50
+                y-p $ [] 110 50 50
+                angle $ * &PI b
+                q $ [] (sin angle) 0 0 (cos angle)
+                q' $ []
+                  negate $ sin angle
+                  , 0 0 (cos angle)
+              group ({})
+                point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
+                  :position $ [] -10 20 0
+                comp-value
+                  {} (:value a) (:position left-p) (:speed 0.6) (:color 0xccaaff)
+                    :bound $ [] 0 20
+                  fn (v d!)
+                    d! cursor $ assoc state :a v
+                comp-value
+                  {} (:value b) (:position right-p) (:speed 0.001) (:color 0xccaaff)
+                    :bound $ [] 0 1
+                  fn (v d!)
+                    d! cursor $ assoc state :b v
+                comp-value
+                  {} (:value c) (:position y-p) (:speed 0.6) (:color 0xccaaff)
+                    :bound $ [] 0 20
+                  fn (v d!)
+                    d! cursor $ assoc state :c v
+                text $ {}
+                  :text $ .!toFixed a 1
+                  :position left-p
+                  :size 4
+                  :height 0.5
+                  :material material-object
+                text $ {}
+                  :text $ .!toFixed b 4
+                  :position right-p
+                  :size 4
+                  :height 0.5
+                  :material material-object
+                text $ {}
+                  :text $ .!toFixed c 1
+                  :position y-p
+                  :size 4
+                  :height 0.5
+                  :material material-object
+                sphere $ {} (:radius 1)
+                  :position $ [] 0 0 0
+                  :rotation $ [] 0 0 0
+                  :scale $ [] 1 1 1
+                  :material material-object
+                , & $ ->
+                  range $ + (.floor a) (.floor c)
+                  map $ fn (level)
+                    group ({}) &
+                      -> (range size)
+                        map $ fn (idx)
+                          let
+                              x $ * unit idx
+                            mesh-line $ {}
+                              :points $ ->
+                                range (negate size) 1
+                                map $ fn (j)
+                                  let
+                                      z $ * unit j
+                                      a $ .floor a
+                                    left-times (&min level a) (- level a) q q' $ [] x 0 z 0
+                              :position $ [] 0 0 0
+                              :material $ assoc material-mesh-line :color
+                                hslx (* level 60) 50 60
+                      , & $ ->
+                        range (negate size) 1
+                        map $ fn (idx)
+                          let
+                              x $ * unit idx
+                            mesh-line $ {}
+                              :points $ -> (range size)
+                                map $ fn (j)
+                                  let
+                                      z $ * unit j
+                                      a $ .floor a
+                                    left-times (&min level a) (- level a) q q' $ [] z 0 x 0
+                              :position $ [] 0 0 0
+                              :scale $ [] 1 1 1
+                              :material $ assoc material-mesh-line :color
+                                hslx (* level 60) 50 60
+        |material-object $ quote
+          def material-object $ {} (:kind :mesh-basic) (:color 0xafdff5) (:opacity 0.8) (:transparent true)
+        |material-line $ quote
+          def material-line $ {} (:kind :line-basic) (:color 0xaaaaff) (:opacity 0.9) (:transparent true)
+        |range-around $ quote
+          defn range-around (n)
+            range (negate n) (inc n)
+        |left-times $ quote
+          defn left-times (n m q q' v)
+            if (<= n 0)
+              if (<= m 0) v $ recur n (dec m) q q' (&q* v q')
+              recur (dec n) m q q' $ &q* q v
+        |material-mesh-line $ quote
+          def material-mesh-line $ {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 1) (:depthTest true) (:lineWidth 0.4)
     |app.updater $ {}
       :ns $ quote
         ns app.updater $ :require
