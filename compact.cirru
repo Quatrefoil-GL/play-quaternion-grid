@@ -18,21 +18,26 @@
             let
                 cursor $ :cursor states
                 state $ or (:data states)
-                  {} $ :a ([] 0 0)
+                  {}
+                    :a $ [] 0 0
+                    :times 0
                 a $ :a state
-                q $ [] (nth a 1) 0 0 (nth a 0)
+                times $ js/Math.floor (:times state)
+                q $ [] (nth a 0) 0 0 (nth a 1)
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
                   :position $ [] -10 20 0
                 group
                   {} $ :position ([] 30 0 0)
-                  comp-value-2d
-                    {} (:value a) (:speed 0.2) (:color 0xccaaff) (:show-text? true)
-                      :position $ [] 20 0 0
-                    fn (v d!)
-                      d! cursor $ assoc state :a v
                   comp-value
-                    {} (:speed 0.1) (:color 0xccaaff) (:show-text? true)
+                    {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label "\"times") (:fract-length 1)
+                      :value $ :times state
+                      :position $ [] 40 10 0
+                      :bound $ [] 0 100
+                    fn (v d!)
+                      d! cursor $ assoc state :times v
+                  comp-value
+                    {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label "\"x")
                       :value $ first a
                       :position $ [] 20 10 0
                       :bound $ [] -20 20
@@ -40,7 +45,7 @@
                       d! cursor $ assoc state :a
                         [] v $ last a
                   comp-value
-                    {} (:speed 0.1) (:color 0xccaaff) (:show-text? true)
+                    {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label "\"w")
                       :value $ last a
                       :position $ [] 28 10 0
                       :bound $ [] -20 20
@@ -48,7 +53,7 @@
                       d! cursor $ assoc state :a
                         [] (first a) v
                   comp-value
-                    {} (:speed 0.05) (:color 0xccaaff) (:show-text? true)
+                    {} (:speed 0.02) (:color 0xccaaff) (:show-text? true) (:label "\"angle")
                       :value $ js/Math.atan2 (nth a 1) (nth a 0)
                       :position $ [] 30 20 0
                       :bound $ [] -20 20
@@ -67,13 +72,17 @@
                 group ({}) & $ -> (make-cube-points)
                   map $ fn (p)
                     sphere $ {} (:radius 0.8) (:width-segments 6) (:height-segments 6)
-                      :position $ &q* (:position p) q
+                      :position $ apply-args
+                          :position p
+                          , times
+                        fn (acc t)
+                          if (&= 0 t) acc $ recur (&q* acc q) (dec t)
                       :material $ assoc material-object :color (:color p)
         |material-mesh-line $ quote
           def material-mesh-line $ {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 1) (:depthTest true) (:lineWidth 0.4)
         |make-cube-points $ quote
           defn make-cube-points () $ let
-              size 4
+              size 3
               seed $ range-around size
             -> seed $ mapcat
               fn (i)
