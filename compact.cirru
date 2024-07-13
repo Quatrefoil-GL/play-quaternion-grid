@@ -305,7 +305,7 @@
             def material-line $ {} (:kind :line-basic) (:color 0xaaaaff) (:opacity 0.9) (:transparent true)
         |material-mesh-line $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def material-mesh-line $ {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 0.8) (:depthTest true) (:lineWidth 0.4) (:transparent true)
+            def material-mesh-line $ {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 0.8) (:depthTest true) (:lineWidth 0.01) (:transparent true)
         |material-object $ %{} :CodeEntry (:doc |)
           :code $ quote
             def material-object $ {} (:kind :mesh-lambert) (:color 0xafdff5) (:opacity 1) (:transparent false)

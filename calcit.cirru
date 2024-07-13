@@ -2564,7 +2564,7 @@
                   |s $ %{} :Expr (:at 1647174928960) (:by |-pxyJ-2j)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1647174928960) (:by |-pxyJ-2j) (:text |:lineWidth)
-                      |b $ %{} :Leaf (:at 1647175020672) (:by |-pxyJ-2j) (:text |0.4)
+                      |b $ %{} :Leaf (:at 1720897349871) (:by |-pxyJ-2j) (:text |0.01)
                   |t $ %{} :Expr (:at 1647507533597) (:by |-pxyJ-2j)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1647507553782) (:by |-pxyJ-2j) (:text |:transparent)
