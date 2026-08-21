@@ -12,18 +12,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
-        node-version: 20
+        node-version: 24
 
     - run: corepack enable && corepack prepare yarn@4.12.0 --activate
-    - uses: calcit-lang/setup-cr@0.0.3
-      with:
-        version: "0.9.0-a1"
+    - uses: calcit-lang/setup-calcit@v1
 
     - name: "compiles to js"
       run: >
-        caps --ci && cr --once js
+        caps --ci && calcit js
         && cp assets/* js-out/
         && yarn && yarn vite build --base=./
 
