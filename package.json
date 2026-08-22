@@ -1,9 +1,9 @@
 {
+  "packageManager": "yarn@4.12.0",
   "name": "quatrefoil",
   "version": "0.0.4",
   "description": "ClojureScript workflow using Calcit Editor",
   "main": "index.js",
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:Quamolit/quatrefoil.calcit.git"
@@ -15,11 +15,12 @@
     "vite": "^5.3.3"
   },
   "dependencies": {
-    "@calcit/procs": "^0.9.0-a1",
+    "@calcit/procs": "^0.13.29",
     "@calcit/std": "^0.0.3",
     "@quamolit/quatrefoil-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
     "@quatrefoil/utils": "^0.0.3",
+    "hsluv": "^1.0.1",
     "meshline": "^3.3.1",
     "mobile-detect": "^1.4.5",
     "three": "^0.166.1"

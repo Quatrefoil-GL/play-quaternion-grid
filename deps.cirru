@@ -1,8 +1,5 @@
 
-
-{}
-  :dependencies $ {}
-    |calcit-lang/quaternion |0.0.8
-    |Quatrefoil-GL/touch-control |main
-    |Quatrefoil-GL/quatrefoil |0.1.0-a6
+{} (:calcit-version |0.13.29)
+  :dependencies $ {} (|Quatrefoil-GL/quatrefoil |main)
+    |calcit-lang/quaternion |main
     |mvc-works/pointed-prompt |main
