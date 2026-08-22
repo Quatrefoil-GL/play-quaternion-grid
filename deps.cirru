@@ -1,5 +1,5 @@
 
 {} (:calcit-version |0.13.29)
-  :dependencies $ {} (|Quatrefoil-GL/quatrefoil |0.1.1)
-    |calcit-lang/quaternion |0.2.1
+  :dependencies $ {} (|Quatrefoil-GL/quatrefoil |main)
+    |calcit-lang/quaternion |main
     |mvc-works/pointed-prompt |main
