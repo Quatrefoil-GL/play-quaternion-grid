@@ -574,6 +574,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hsluv@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "hsluv@npm:1.0.2"
+  checksum: 10c0/1baa35d582ba88d45c3b7d0442c14b716df25eccb99c5b1b44bbf3c08a278e53c3aa0abfedca19e695603bb6f0d1e1f438660f2aca1227461a2b9d9c361b8999
+  languageName: node
+  linkType: hard
+
 "individual@npm:^3.0.0":
   version: 3.0.0
   resolution: "individual@npm:3.0.0"
@@ -741,6 +748,7 @@ __metadata:
     "@quamolit/touch-control": "npm:^0.0.13"
     "@quatrefoil/utils": "npm:^0.0.3"
     bottom-tip: "npm:^0.1.5"
+    hsluv: "npm:^1.0.1"
     meshline: "npm:^3.3.1"
     mobile-detect: "npm:^1.4.5"
     three: "npm:^0.166.1"

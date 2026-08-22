@@ -12,11 +12,11 @@
           :code $ quote
             defcomp comp-container (store)
               let
-                  states $ :states store
-                  cursor $ :cursor states
-                  state $ either (:data states)
+                  states $ field store :states
+                  cursor $ field states :cursor
+                  state $ either (field states :data)
                     {} $ :tab :field
-                  tab $ :tab state
+                  tab $ field state :tab
                   scaled 0.02
                 scene ({})
                   group
@@ -45,13 +45,13 @@
           :code $ quote
             defn comp-field-play (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ field states :cursor
+                  state $ or (field states :data)
                     {}
                       :a $ [] 0 0
                       :times 0
-                  a $ :a state
-                  times $ js/Math.floor (:times state)
+                  a $ field state :a
+                  times $ js/Math.floor (field state :times)
                   q $ [] (nth a 0) 0 0 (nth a 1)
                 group ({})
                   point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
@@ -60,7 +60,7 @@
                     {} $ :position ([] 30 0 0)
                     comp-value
                       {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label |times) (:fract-length 1)
-                        :value $ :times state
+                        :value $ field state :times
                         :position $ [] 40 10 0
                         :bound $ [] 0 100
                       fn (v d!)
@@ -102,23 +102,23 @@
                     map $ fn (p)
                       sphere $ {} (:radius 0.8) (:width-segments 6) (:height-segments 6)
                         :position $ apply-args
-                            :position p
+                            field p :position
                             , times
                           fn (acc t)
                             if (&= 0 t) acc $ recur (&q* acc q) (dec t)
-                        :material $ assoc material-object :color (:color p)
+                        :material $ assoc material-object :color (field p :color)
           :examples $ []
           :schema $ :: 'Dynamic
         |comp-grid-play $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn comp-grid-play (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ field states :cursor
+                  state $ or (field states :data)
                     {} (:a 12) (:b 0.045) (:c 0)
-                  a $ :a state
-                  b $ :b state
-                  c $ :c state
+                  a $ field state :a
+                  b $ field state :b
+                  c $ field state :c
                   unit 6
                   size 16
                   left-p $ [] 110 60 50
@@ -219,13 +219,13 @@
           :code $ quote
             defn comp-trail-play (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ field states :cursor
+                  state $ or (field states :data)
                     {}
                       :a $ [] 0 0
                       :times 0
-                  a $ :a state
-                  times $ js/Math.floor (:times state)
+                  a $ field state :a
+                  times $ js/Math.floor (field state :times)
                   q $ [] (nth a 0) 0 0 (nth a 1)
                 group ({})
                   point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
@@ -234,7 +234,7 @@
                     {} $ :position ([] 30 0 0)
                     comp-value
                       {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label |times) (:fract-length 1)
-                        :value $ :times state
+                        :value $ field state :times
                         :position $ [] 40 10 0
                         :bound $ [] 0 100
                       fn (v d!)
@@ -276,8 +276,8 @@
                     map $ fn (p)
                       let
                           points $ apply-args
-                              [] $ :position p
-                              :position p
+                              [] $ option:unwrap-or (get p :position) nil
+                              field p :position
                               , times
                             fn (acc curr t)
                               if (&= 0 t) acc $ let
@@ -286,7 +286,13 @@
                         mesh-line $ {} (:points points)
                           :position $ [] 5 -10 0
                           :material $ merge material-mesh-line
-                            {} $ :color (:color p)
+                            {} $ :color (field p :color)
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |field $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn field (value key)
+              option:unwrap-or (get value key) nil
           :examples $ []
           :schema $ :: 'Dynamic
         |left-times $ %{} 'CodeEntry (:doc |)
@@ -348,7 +354,8 @@
       :defs $ {}
         |dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def dev? $ = |dev (get-env |mode)
+            def dev? $ = = |dev
+              option:unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
@@ -373,6 +380,16 @@
                   reset! *store store
           :examples $ []
           :schema $ :: 'Dynamic
+        |ffi-object $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-object (value) (unsafe-coerce value JsObject)
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |js-number $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn js-number (value) (unsafe-coerce value Number)
+          :examples $ []
+          :schema $ :: 'Dynamic
         |main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! ()
@@ -380,7 +397,9 @@
               inject-tree-methods
               set-perspective-camera! $ {} (:fov 40) (:near 0.1) (:far 100)
                 :position $ [] 0 0 8
-                :aspect $ / js/window.innerWidth js/window.innerHeight
+                :aspect $ /
+                  js-number $ .-innerWidth (ffi-object js/window)
+                  js-number $ .-innerHeight (ffi-object js/window)
               let
                   canvas-el $ js/document.querySelector |canvas
                 init-renderer! canvas-el $ {} (:background 0x110022)
