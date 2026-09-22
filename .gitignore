@@ -14,3 +14,5 @@ dist/
 !.yarn/versions
 
 .DS_Store
+.pnp.cjs
+.pnp.loader.mjs
