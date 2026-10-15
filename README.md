@@ -15,10 +15,21 @@ PR CDN 前缀按编号/run/attempt 隔离，生产 COS 前缀和原服务器 rsy
 串行队列保留待处理任务，构建与上传分别设定超时。Calcit 从 `deps.cirru` 读取，
 由 Caps 检查工具链一致性，不再在工作流重复硬编码版本。
 
-当前保持正式 Calcit/procs 0.27.0。正式 0.28 的只读检查仍被已发布 Quatrefoil
-0.1.5 的 Option/spread 旧用法阻塞，等待兼容模块发布，不使用 hash/新 alpha
-绕过；本次是独立部署改造，不代表语言升级已经完成。原 Caps 非 strict 安装
-仍有 JS-FFI 版本冲突警告，现有入口、公开 API 与类型门禁全部保留。
+使用正式 Calcit/procs 0.29.3，入口显式为 JS/browser。依赖采用已发布的
+Quatrefoil 0.1.7 兼容组合：JS-FFI 0.2.3、Quaternion 0.2.13、
+Pointed Prompt 0.0.18；依赖已在上游统一，不使用 alpha/hash。
+Caps 使用 strict 安装，原公开定义、类型和严格迁移门禁保留并改用当前命令。
+
+组件返回具体 Shape/Component，数值、Quaternion 和开放状态采用实际解码；
+数字控件及角度计算解包 Option，不再把 first/last/nth 的包装值当数字。
+位置和线段点采用渲染器要求的 Calcit xyz List，不再传入 q-to-js 的 JS 数组；
+该真实浏览器报错保留一条定义内回归，通过 Calcit 自带 test 运行。
+回调明确声明 dispatch 的 Unit 合同，场景的混合子节点继续保持原有顺序。
+非法状态会在解码边界更早报错。COS 内置 verify、隔离预览前缀和生产部署
+路径不变，不新增校验脚本，也不提交生成目录。
+
+0.30.0 仅作为额外编译预检，不代表已经完成 0.30.1 升级；正式工具链和
+JS runtime 配套可用后再更新固定版本并重跑运行验收。
 
 ### License
 
