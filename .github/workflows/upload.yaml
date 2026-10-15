@@ -45,7 +45,7 @@ jobs:
     - name: Resolve immutable dependencies
       run: |
         set -euo pipefail
-        caps --ci
+        caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
 
@@ -56,19 +56,20 @@ jobs:
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru fix --workflow strict --verify --format edn
         calcit calcit.cirru --check-only
-        calcit calcit.cirru analyze check-public \
+        calcit calcit.cirru test app.comp.container/q-position --require-match --summary-only --format json
+        calcit calcit.cirru --check-only \
           --ns app.comp.container \
           --ns app.config \
           --ns app.main \
           --ns app.updater \
           --summary-only --format json
-        calcit calcit.cirru analyze check-types --summary-only --format json
+        calcit calcit.cirru analyze weak-types --only coverage --summary-only --format json
         calcit calcit.cirru analyze weak-types \
           --only schema-dynamic,code-dynamic \
           --intent unresolved \
           --summary-only --format json
-        calcit calcit.cirru analyze deprecated --summary-only --format json
-        calcit calcit.cirru analyze dynamic-methods
+        calcit calcit.cirru analyze weak-types --only deprecated-call --summary-only --format json
+        calcit calcit.cirru analyze weak-types --only dynamic-method
 
     - name: Select CDN asset path
       id: asset-path
