@@ -15,10 +15,15 @@ PR CDN 前缀按编号/run/attempt 隔离，生产 COS 前缀和原服务器 rsy
 串行队列保留待处理任务，构建与上传分别设定超时。Calcit 从 `deps.cirru` 读取，
 由 Caps 检查工具链一致性，不再在工作流重复硬编码版本。
 
-使用正式 Calcit/procs 0.29.3，入口显式为 JS/browser。依赖采用已发布的
-Quatrefoil 0.1.7 兼容组合：JS-FFI 0.2.3、Quaternion 0.2.13、
-Pointed Prompt 0.0.18；依赖已在上游统一，不使用 alpha/hash。
+使用者影响：工具链配对正式 Calcit/procs 0.30.0，入口仍为 JS/browser。
+依赖采用已发布的 Quatrefoil 0.1.8、JS-FFI 0.2.3、Quaternion 0.2.14、
+Pointed Prompt 0.0.19，传递 Touch Control 0.0.31；不使用 alpha/hash。
+19 处旧 Option helper 改为接收者方法或开放 Map 的显式 match，原缺失值、
+nil、默认值和解包报错行为不变。场景算法、密度、顺序和部署路径不变。
 Caps 使用 strict 安装，原公开定义、类型和严格迁移门禁保留并改用当前命令。
+控制器 CSS 从同一 Caps 模块加载，不再另装旧 npm CSS 包；原 CSS 内容一致。
+树方法注入统一使用已有正式 @quatrefoil/utils，移除旧 @quamolit 包，注入实现内容一致。
+升级 procs 后重启旧 Vite 服务，必要时用 `yarn vite --force` 重建预构建缓存。
 
 组件返回具体 Shape/Component，数值、Quaternion 和开放状态采用实际解码；
 数字控件及角度计算解包 Option，不再把 first/last/nth 的包装值当数字。
@@ -28,8 +33,7 @@ Caps 使用 strict 安装，原公开定义、类型和严格迁移门禁保留�
 非法状态会在解码边界更早报错。COS 内置 verify、隔离预览前缀和生产部署
 路径不变，不新增校验脚本，也不提交生成目录。
 
-0.30.0 仅作为额外编译预检，不代表已经完成 0.30.1 升级；正式工具链和
-JS runtime 配套可用后再更新固定版本并重跑运行验收。
+0.30.0 已配套运行验收；0.30.1 尚未正式发布，不代表已完成该版本升级。
 
 ### License
 
