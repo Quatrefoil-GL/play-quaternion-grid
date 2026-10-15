@@ -16,8 +16,8 @@ PR CDN 前缀按编号/run/attempt 隔离，生产 COS 前缀和原服务器 rsy
 由 Caps 检查工具链一致性，不再在工作流重复硬编码版本。
 
 使用正式 Calcit/procs 0.29.3，入口显式为 JS/browser。依赖采用已发布的
-Quatrefoil 0.1.6 兼容组合：JS-FFI 0.2.2、Quaternion 0.2.12、
-Pointed Prompt 0.0.17；不是各模块最新版的任意拼接，不使用 alpha/hash。
+Quatrefoil 0.1.7 兼容组合：JS-FFI 0.2.3、Quaternion 0.2.13、
+Pointed Prompt 0.0.18；依赖已在上游统一，不使用 alpha/hash。
 Caps 使用 strict 安装，原公开定义、类型和严格迁移门禁保留并改用当前命令。
 
 组件返回具体 Shape/Component，数值、Quaternion 和开放状态采用实际解码；
