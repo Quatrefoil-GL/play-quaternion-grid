@@ -85,8 +85,12 @@
                 a $ as-number-list $ field state :a
                 times $ floor $ as-number (field state :times)
                 q $ quaternion
-                  as-number $ option:unwrap $ nth a 1
-                  as-number $ option:unwrap $ nth a 0
+                  as-number $
+                    nth a 1
+                    , .unwrap
+                  as-number $
+                    nth a 0
+                    , .unwrap
                   , 0 0
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
@@ -108,7 +112,9 @@
                       d! cursor $ assoc state :times v
                   comp-value
                     {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label |x)
-                      :value $ option:unwrap $ first a
+                      :value $
+                        first a
+                        , .unwrap
                       :position $ [] 20 10 0
                       :bound $ [] -20 20
                     fn (v d!)
@@ -119,10 +125,12 @@
                             :return 'Unit
                         :return 'Unit
                       d! cursor $ assoc state :a $ [] v
-                        option:unwrap $ last a
+                        (last a) .unwrap
                   comp-value
                     {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label |w)
-                      :value $ option:unwrap $ last a
+                      :value $
+                        last a
+                        , .unwrap
                       :position $ [] 28 10 0
                       :bound $ [] -20 20
                     fn (v d!)
@@ -133,13 +141,15 @@
                             :return 'Unit
                         :return 'Unit
                       d! cursor $ assoc state :a $ []
-                        option:unwrap $ first a
+                          first a
+                          , .unwrap
                         , v
                   comp-value
                     {} (:speed 0.02) (:color 0xccaaff) (:show-text? true) (:label |angle)
                       :value $ js/Math.atan2
-                        option:unwrap $ nth a 1
-                        option:unwrap $ nth a 0
+                          nth a 1
+                          , .unwrap
+                        (nth a 0) .unwrap
                       :position $ [] 30 20 0
                       :bound $ [] -20 20
                     fn (v d!)
@@ -323,8 +333,12 @@
                 a $ as-number-list $ field state :a
                 times $ floor $ as-number (field state :times)
                 q $ quaternion
-                  as-number $ option:unwrap $ nth a 1
-                  as-number $ option:unwrap $ nth a 0
+                  as-number $
+                    nth a 1
+                    , .unwrap
+                  as-number $
+                    nth a 0
+                    , .unwrap
                   , 0 0
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
@@ -346,7 +360,9 @@
                       d! cursor $ assoc state :times v
                   comp-value
                     {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label |x)
-                      :value $ option:unwrap $ first a
+                      :value $
+                        first a
+                        , .unwrap
                       :position $ [] 20 10 0
                       :bound $ [] -20 20
                     fn (v d!)
@@ -357,10 +373,12 @@
                             :return 'Unit
                         :return 'Unit
                       d! cursor $ assoc state :a $ [] v
-                        option:unwrap $ last a
+                        (last a) .unwrap
                   comp-value
                     {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label |w)
-                      :value $ option:unwrap $ last a
+                      :value $
+                        last a
+                        , .unwrap
                       :position $ [] 28 10 0
                       :bound $ [] -20 20
                     fn (v d!)
@@ -371,13 +389,15 @@
                             :return 'Unit
                         :return 'Unit
                       d! cursor $ assoc state :a $ []
-                        option:unwrap $ first a
+                          first a
+                          , .unwrap
                         , v
                   comp-value
                     {} (:speed 0.02) (:color 0xccaaff) (:show-text? true) (:label |angle)
                       :value $ js/Math.atan2
-                        option:unwrap $ nth a 1
-                        option:unwrap $ nth a 0
+                          nth a 1
+                          , .unwrap
+                        (nth a 0) .unwrap
                       :position $ [] 30 20 0
                       :bound $ [] -20 20
                     fn (v d!)
@@ -416,7 +436,9 @@
             :features $ #{} :js-ffi
         'field $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn field (value key)
-            option:unwrap-or (get value key) nil
+            match (get value key)
+              (:some option-value) option-value
+              (:none) nil
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
             :args $ [] (:: 'Map 'Tag 'Dynamic) 'Tag
@@ -546,7 +568,9 @@
       :defs $ {} $ 'dev?
         %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $
+              get-env |mode
+              , .unwrap-or |release
           :examples $ []
           :schema $ :: 'Bool
       :ns $ %{} 'NsEntry (:doc |)
@@ -590,7 +614,9 @@
               :position $ [] 0 0 8
               :aspect $ / (viewport-width) (viewport-height)
             let
-                canvas-el $ option:unwrap $ query-selector |canvas
+                canvas-el $
+                  query-selector |canvas
+                  , .unwrap
               init-renderer! canvas-el $ {} $ :background 0x110022
             render-app!
             add-watch! *store :changes $ fn (store prev) (render-app!)
@@ -639,7 +665,6 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            |@quamolit/quatrefoil-utils :refer $ inject-tree-methods
             quatrefoil.core :refer $ render-canvas! *global-tree clear-cache! init-controls! init-renderer! handle-key-event handle-control-events
             quatrefoil.dsl.object3d-dom :refer $ set-perspective-camera!
             app.comp.container :refer $ comp-container
@@ -651,6 +676,7 @@
             app.config :refer $ dev?
             js-ffi.browser :refer $ viewport-width viewport-height query-selector
             app.updater :refer $ updater
+            |@quatrefoil/utils :refer $ inject-tree-methods
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
