@@ -669,7 +669,7 @@
             quatrefoil.dsl.object3d-dom :refer $ set-perspective-camera!
             app.comp.container :refer $ comp-container
             |three :as THREE
-            touch-control.core :refer $ render-control! control-states start-control-loop! clear-control-loop!
+            touch-control.core :refer $ render-control! start-control-loop! clear-control-loop!
             |mobile-detect :default mobile-detect
             |bottom-tip :default hud!
             |./calcit.build-errors :default build-errors
