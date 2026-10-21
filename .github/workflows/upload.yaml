@@ -55,7 +55,7 @@ jobs:
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru fix --workflow strict --verify --format edn
-        calcit calcit.cirru --check-only
+        calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru test app.comp.container/q-position --require-match --summary-only --format json
         calcit calcit.cirru --check-only \
           --ns app.comp.container \

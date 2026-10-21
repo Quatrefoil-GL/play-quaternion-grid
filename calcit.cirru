@@ -10,6 +10,10 @@
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
+        'CubePoint $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct CubePoint (:position 'quaternion.core/Quaternion) (:color 'Number)
+          :examples $ []
+          :schema $ :: 'StructDef
         'as-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-number (value) (decode-map-as value 'Number)
           :examples $ []
@@ -24,12 +28,6 @@
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
             :return $ :: 'List 'Number
-        'as-quaternion $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-quaternion (value) (decode-map-as value 'quaternion.core/Quaternion)
-          :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quaternion.core/Quaternion)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
@@ -173,10 +171,8 @@
                   -> (make-cube-points 3 4)
                     map $ fn (p)
                       sphere $ {} (:radius 0.8) (:width-segments 6) (:height-segments 6)
-                        :position $ q-position $ rotate-times
-                          as-quaternion $ field p :position
-                          , q times
-                        :material $ assoc material-object :color $ field p :color
+                        :position $ q-position $ rotate-times (:position p) q times
+                        :material $ assoc material-object :color $ :color p
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Shape)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
@@ -422,14 +418,12 @@
                     map $ fn (p)
                       let
                           points $ ->
-                            rotation-trail
-                              as-quaternion $ field p :position
-                              , q times
+                            rotation-trail (:position p) q times
                             map q-position
                         mesh-line $ {} (:points points)
                           :position $ [] 5 -10 0
                           :material $ merge material-mesh-line $ {}
-                            :color $ field p :color
+                            :color $ :color p
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Shape)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
@@ -462,12 +456,12 @@
             mapcat seed $ fn (j)
               hint-fn $ {}
                 :args $ [] 'Number
-                :return $ :: 'List $ :: 'Map 'Tag 'Dynamic
+                :return $ :: 'List 'app.comp.container/CubePoint
               make-cube-row seed unit i j
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) 'Number 'Number
-            :return $ :: 'List $ :: 'Map 'Tag 'Dynamic
+            :return $ :: 'List 'app.comp.container/CubePoint
         'make-cube-points $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-points (size unit)
             let
@@ -475,18 +469,18 @@
               mapcat seed $ fn (i)
                 hint-fn $ {}
                   :args $ [] 'Number
-                  :return $ :: 'List $ :: 'Map 'Tag 'Dynamic
+                  :return $ :: 'List 'app.comp.container/CubePoint
                 make-cube-plane seed unit i
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] 'Number 'Number
-            :return $ :: 'List $ :: 'Map 'Tag 'Dynamic
+            :return $ :: 'List 'app.comp.container/CubePoint
         'make-cube-row $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-row (seed unit i j)
             map seed $ fn (k)
-              {}
-                :position $ &q* (quaternion unit 0 0 0) (quaternion 0 i j k)
-                :color $ hslx
+              CubePoint :position
+                &q* (quaternion unit 0 0 0) (quaternion 0 i j k)
+                , :color $ as-number $ hslx
                   +
                     * (/ i 12) 360
                     , 180
@@ -499,7 +493,7 @@
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) 'Number 'Number 'Number
-            :return $ :: 'List $ :: 'Map 'Tag 'Dynamic
+            :return $ :: 'List 'app.comp.container/CubePoint
         'material-line $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-line
             {} (:kind :line-basic) (:color 0xaaaaff) (:opacity 0.9) (:transparent true)
