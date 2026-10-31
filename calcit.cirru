@@ -13,21 +13,18 @@
         'CubePoint $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct CubePoint (:position 'quaternion.core/Quaternion) (:color 'Number)
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'as-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-number (value) (decode-map-as value 'Number)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic (-> Number) (:features :js-ffi)
         'as-number-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-number-list (value)
             decode-map-as value $ :: 'List 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn Dynamic
+            -> $ List Number
+            :features :js-ffi
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
@@ -45,12 +42,9 @@
                     :scale $ [] scaled scaled scaled
                     :position $ [] -0.5 1.2 -0.6
                   comp-tabs tab $ fn (t d!)
-                    hint-fn $ {}
-                      :args $ [] 'Tag $ :: 'Fn
-                        {}
-                          :args $ [] 'Dynamic 'Dynamic
-                          :return 'Unit
-                      :return 'Unit
+                    hint-fn $ Fn Tag
+                      Fn Dynamic Dynamic $ -> Unit
+                      -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
                     :grid $ comp-grid-play $ decode-map-as (>> states :grid-play) (:: 'Map 'Tag 'Dynamic)
@@ -67,9 +61,7 @@
                   ; point-light $ {} (:color 0xffffff) (:intensity 5) (:distance 200)
                     :position $ [] 0 60 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Component)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Component) (:features :js-ffi)
         'comp-field-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-field-play (states)
             let
@@ -101,12 +93,9 @@
                       :position $ [] 40 10 0
                       :bound $ [] 0 100
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
                     {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label |x)
@@ -116,12 +105,9 @@
                       :position $ [] 20 10 0
                       :bound $ [] -20 20
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
                   comp-value
@@ -132,12 +118,9 @@
                       :position $ [] 28 10 0
                       :bound $ [] -20 20
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
                           , .unwrap
@@ -151,12 +134,9 @@
                       :position $ [] 30 20 0
                       :bound $ [] -20 20
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       let
                           length $ q-length q
                         d! cursor $ assoc state :a $ []
@@ -174,9 +154,7 @@
                         :position $ q-position $ rotate-times (:position p) q times
                         :material $ assoc material-object :color $ :color p
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Shape)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'comp-grid-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-grid-play (states)
             let
@@ -207,34 +185,25 @@
                       {} (:value a) (:position left-p) (:speed 0.6) (:color 0xccaaff) (:show-text? true)
                         :bound $ [] 0 20
                       fn (v d!)
-                        hint-fn $ {}
-                          :args $ [] 'Number $ :: 'Fn
-                            {}
-                              :args $ [] 'Dynamic 'Dynamic
-                              :return 'Unit
-                          :return 'Unit
+                        hint-fn $ Fn Number
+                          Fn Dynamic Dynamic $ -> Unit
+                          -> Unit
                         d! cursor $ assoc state :a v
                     comp-value
                       {} (:value b) (:position right-p) (:speed 0.001) (:color 0xccaaff) (:show-text? true) (:fract-length 4)
                         :bound $ [] 0 1
                       fn (v d!)
-                        hint-fn $ {}
-                          :args $ [] 'Number $ :: 'Fn
-                            {}
-                              :args $ [] 'Dynamic 'Dynamic
-                              :return 'Unit
-                          :return 'Unit
+                        hint-fn $ Fn Number
+                          Fn Dynamic Dynamic $ -> Unit
+                          -> Unit
                         d! cursor $ assoc state :b v
                     comp-value
                       {} (:value c) (:position y-p) (:speed 0.6) (:color 0xccaaff) (:show-text? true)
                         :bound $ [] 0 20
                       fn (v d!)
-                        hint-fn $ {}
-                          :args $ [] 'Number $ :: 'Fn
-                            {}
-                              :args $ [] 'Dynamic 'Dynamic
-                              :return 'Unit
-                          :return 'Unit
+                        hint-fn $ Fn Number
+                          Fn Dynamic Dynamic $ -> Unit
+                          -> Unit
                         d! cursor $ assoc state :c v
                     sphere $ {} (:radius 1)
                       :position $ [] 0 0 0
@@ -276,9 +245,7 @@
                                   :scale $ [] 1 1 1
                                   :material $ assoc material-mesh-line :color $ hslx (* level 60) 50 60
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Shape)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'comp-tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-tabs (selected-tab on-change)
             quatrefoil.alias/create-element :group
@@ -295,27 +262,23 @@
                         :transparent true
                       :event $ {} $ :click
                         fn (e d!)
-                          hint-fn $ {}
-                            :args $ [] 'Dynamic $ :: 'Fn
-                              {}
-                                :args $ [] 'Dynamic 'Dynamic
-                                :return 'Unit
-                            :return 'Unit
+                          hint-fn $ Fn Dynamic
+                            Fn Dynamic Dynamic $ -> Unit
+                            -> Unit
                           on-change tab d!
                     text $ {}
                       :text $ str tab
                       :position $ [] -4 0 1
                       :material $ {} (:kind :mesh-lambert) (:color 0xffffaa) (:opacity 1) (:transparent true)
                       :size 1.4
-                      :height 0.1
+                      :depth 0.1
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Shape)
-            :args $ [] 'Tag $ :: 'Fn
-              {} (:return 'Unit)
-                :args $ [] 'Tag $ :: 'Fn
-                  {} (:return 'Unit)
-                    :args $ [] 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Tag
+            Fn Tag
+              Fn Dynamic Dynamic $ -> Unit
+              -> Unit
+            -> quatrefoil.schema/Shape
+            :features :js-ffi
         'comp-trail-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-trail-play (states)
             let
@@ -347,12 +310,9 @@
                       :position $ [] 40 10 0
                       :bound $ [] 0 100
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
                     {} (:speed 0.05) (:color 0xccaaff) (:show-text? true) (:label |x)
@@ -362,12 +322,9 @@
                       :position $ [] 20 10 0
                       :bound $ [] -20 20
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
                   comp-value
@@ -378,12 +335,9 @@
                       :position $ [] 28 10 0
                       :bound $ [] -20 20
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
                           , .unwrap
@@ -397,12 +351,9 @@
                       :position $ [] 30 20 0
                       :bound $ [] -20 20
                     fn (v d!)
-                      hint-fn $ {}
-                        :args $ [] 'Number $ :: 'Fn
-                          {}
-                            :args $ [] 'Dynamic 'Dynamic
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Number
+                        Fn Dynamic Dynamic $ -> Unit
+                        -> Unit
                       let
                           length $ q-length q
                         d! cursor $ assoc state :a $ []
@@ -425,56 +376,45 @@
                           :material $ merge material-mesh-line $ {}
                             :color $ :color p
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quatrefoil.schema/Shape)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'field $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn field (value key)
             match (get value key)
               (:some option-value) option-value
               (:none) nil
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Tag
+          :schema $ quote $ Fn (Map Tag Dynamic) Tag (-> Dynamic)
         'join-children $ %{} 'CodeEntry
           :doc "|Join ordered virtual children, which may mix Shape and Component values; preserve the renderer's heterogeneous List<Dynamic> boundary without unchecked casts."
           :code $ quote $ defn join-children (left right) (concat left right)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Dynamic) (:: 'List 'Dynamic)
-            :return $ :: 'List 'Dynamic
+          :schema $ quote $ Fn (List Dynamic) (List Dynamic)
+            -> $ List Dynamic
         'left-times $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn left-times (n m q q' v)
             if (<= n 0)
               if (<= m 0) v $ recur n (dec m) q q' $ &q* v q'
               recur (dec n) m q q' $ &q* q v
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quaternion.core/Quaternion)
-            :args $ [] 'Number 'Number 'quaternion.core/Quaternion 'quaternion.core/Quaternion 'quaternion.core/Quaternion
+          :schema $ quote $ Fn Number Number quaternion.core/Quaternion quaternion.core/Quaternion quaternion.core/Quaternion (-> quaternion.core/Quaternion)
         'make-cube-plane $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-plane (seed unit i)
             mapcat seed $ fn (j)
-              hint-fn $ {}
-                :args $ [] 'Number
-                :return $ :: 'List 'app.comp.container/CubePoint
+              hint-fn $ Fn Number $ -> (List app.comp.container/CubePoint)
               make-cube-row seed unit i j
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) 'Number 'Number
-            :return $ :: 'List 'app.comp.container/CubePoint
+          :schema $ quote $ Fn (List Number) Number Number
+            -> $ List app.comp.container/CubePoint
         'make-cube-points $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-points (size unit)
             let
                 seed $ range-around size
               mapcat seed $ fn (i)
-                hint-fn $ {}
-                  :args $ [] 'Number
-                  :return $ :: 'List 'app.comp.container/CubePoint
+                hint-fn $ Fn Number $ -> (List app.comp.container/CubePoint)
                 make-cube-plane seed unit i
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Number 'Number
-            :return $ :: 'List 'app.comp.container/CubePoint
+          :schema $ quote $ Fn Number Number
+            -> $ List app.comp.container/CubePoint
         'make-cube-row $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-row (seed unit i j)
             map seed $ fn (k)
@@ -491,24 +431,23 @@
                     * (/ k 16) 100
                     , 70
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) 'Number 'Number 'Number
-            :return $ :: 'List 'app.comp.container/CubePoint
+          :schema $ quote $ Fn (List Number) Number Number Number
+            -> $ List app.comp.container/CubePoint
         'material-line $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-line
             {} (:kind :line-basic) (:color 0xaaaaff) (:opacity 0.9) (:transparent true)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Map Tag Dynamic
         'material-mesh-line $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-mesh-line
             {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 0.8) (:depthTest true) (:lineWidth 0.01) (:transparent true)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Map Tag Dynamic
         'material-object $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-object
             {} (:kind :mesh-lambert) (:color 0xafdff5) (:opacity 1) (:transparent false)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Map Tag Dynamic
         'q-position $ %{} 'CodeEntry
           :doc "|Extract xyz as a Calcit List for Quatrefoil positions and mesh-line points; q-to-js produces a JavaScript xyzw array, which is not the renderer data contract."
           :code $ quote $ defn q-position (value)
@@ -516,9 +455,8 @@
               :quaternion scalar x y z
               [] x y z
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'quaternion.core/Quaternion
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn quaternion.core/Quaternion
+            -> $ List Number
           :tests $ [] $ %{} 'TestEntry (:name |renderer-position-is-calcit-xyz-list)
             :code $ quote $ assert= ([] 1 2 3)
               q-position $ quaternion 0 1 2 3
@@ -526,31 +464,27 @@
           :code $ quote $ defn range-around (n)
             range (negate n) (inc n)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Number
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn Number
+            -> $ List Number
         'rotate-times $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rotate-times (start q times)
             if (<= times 0) start $ rotate-times (&q* start q) q $ dec times
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'quaternion.core/Quaternion)
-            :args $ [] 'quaternion.core/Quaternion 'quaternion.core/Quaternion 'Number
+          :schema $ quote $ Fn quaternion.core/Quaternion quaternion.core/Quaternion Number (-> quaternion.core/Quaternion)
         'rotation-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rotation-trail (start q times)
             rotation-trail-loop ([] start) start q times
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'quaternion.core/Quaternion 'quaternion.core/Quaternion 'Number
-            :return $ :: 'List 'quaternion.core/Quaternion
+          :schema $ quote $ Fn quaternion.core/Quaternion quaternion.core/Quaternion Number
+            -> $ List quaternion.core/Quaternion
         'rotation-trail-loop $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rotation-trail-loop (acc curr q times)
             if (<= times 0) acc $ let
                 next $ &q* curr q
               rotation-trail-loop (conj acc next) next q $ dec times
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'quaternion.core/Quaternion) 'quaternion.core/Quaternion 'quaternion.core/Quaternion 'Number
-            :return $ :: 'List 'quaternion.core/Quaternion
+          :schema $ quote $ Fn (List quaternion.core/Quaternion) quaternion.core/Quaternion quaternion.core/Quaternion Number
+            -> $ List quaternion.core/Quaternion
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -566,7 +500,7 @@
               get-env |mode
               , .unwrap-or |release
           :examples $ []
-          :schema $ :: 'Bool
+          :schema $ quote Bool
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.main $ %{} 'FileEntry
@@ -576,16 +510,14 @@
             {} $ :states $ {}
               :cursor $ []
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Ref (Map Tag Dynamic)
         'MobileDetectHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait MobileDetectHost
-            .mobile? $ :: 'Fn $ {}
-              :args $ [] 'app.main/MobileDetectHost
-              :return 'Bool
+            .mobile? $ quote $ Fn app.main/MobileDetectHost (-> Bool)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :mobile? |mobile
-          :schema $ :: 'Trait
+          :schema $ quote Trait
           :tags $ #{} :ffi :js-host
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op op-data)
@@ -597,9 +529,7 @@
                 reset! *store store
                 , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic Dynamic (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             when dev? (load-console-formatter!) (println "|Run in dev mode")
@@ -621,18 +551,14 @@
             println "|App started!"
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mobile? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mobile? ()
             let
                 detector $ unsafe-coerce (new mobile-detect js/window.navigator.userAgent) app.main/MobileDetectHost
               detector .mobile?
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Bool) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if
@@ -647,15 +573,12 @@
                 println "|Code updated."
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! () (; println "|Render app:")
             render-canvas! (comp-container @*store) dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -679,9 +602,8 @@
               :states $ update-states store op-data
               _ store
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Dynamic
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn (Map Tag Dynamic) Dynamic Dynamic
+            -> $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ quatrefoil.cursor :refer $ update-states
