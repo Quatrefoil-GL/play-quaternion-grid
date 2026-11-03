@@ -241,8 +241,7 @@
                                           a $ floor a
                                         q-position $ left-times (&min level a) (- level a) q q' $ quaternion 0 x 0 z
                                   :position $ [] 0 0 0
-                                  :material $ assoc material-mesh-line :color $ as-number
-                                    hslx (* level 60) 50 60
+                                  :material $ assoc material-mesh-line :color $ hslx (* level 60) 50 60
                           ->
                             range (negate size) 1
                             map $ fn (idx)
@@ -257,8 +256,7 @@
                                         q-position $ left-times (&min level a) (- level a) q q' $ quaternion 0 z 0 x
                                   :position $ [] 0 0 0
                                   :scale $ [] 1 1 1
-                                  :material $ assoc material-mesh-line :color $ as-number
-                                    hslx (* level 60) 50 60
+                                  :material $ assoc material-mesh-line :color $ hslx (* level 60) 50 60
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'comp-tabs $ %{} 'CodeEntry (:doc |)
@@ -434,7 +432,7 @@
             map seed $ fn (k)
               CubePoint :position
                 &q* (quaternion unit 0 0 0) (quaternion 0 i j k)
-                , :color $ as-number $ hslx
+                , :color $ hslx
                   +
                     * (/ i 12) 360
                     , 180
