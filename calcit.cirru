@@ -11,16 +11,25 @@
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
         'CubePoint $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct CubePoint (:position 'quaternion.core/Quaternion) (:color 'Number)
+          :code $ quote $ defstruct CubePoint (:position quaternion.core/Quaternion) (:color Number)
           :examples $ []
           :schema $ quote StructDef
+        'MaterialValue $ %{} 'CodeEntry
+          :doc "|本示例材质 Map 中的实际值域：种类 Tag、数值颜色/透明度、Bool 开关；不代表库的全部材质 API。"
+          :code $ quote $ defunion MaterialValue Tag Number Bool
+          :examples $ []
+          :schema $ quote UnionDef
+        'SceneChild $ %{} 'CodeEntry (:doc "|本示例 join-children 使用的两种真实节点：Component 或 Shape。")
+          :code $ quote $ defunion SceneChild quatrefoil.schema/Component quatrefoil.schema/Shape
+          :examples $ []
+          :schema $ quote UnionDef
         'as-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-number (value) (decode-map-as value 'Number)
           :examples $ []
           :schema $ quote $ Fn Dynamic (-> Number) (:features :js-ffi)
         'as-number-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-number-list (value)
-            decode-map-as value $ :: 'List 'Number
+            decode-map-as value $ quote $ List Number
           :examples $ []
           :schema $ quote $ Fn Dynamic
             -> $ List Number
@@ -28,12 +37,13 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
-                states $ decode-map-as (field store :states) (:: 'Map 'Tag 'Dynamic)
+                states $ decode-map-as (field store :states)
+                  quote $ Map Tag Dynamic
                 cursor $ field states :cursor
                 state $ decode-map-as
                   either (field states :data)
                     {} $ :tab :field
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 tab $ decode-map-as (field state :tab) 'Tag
                 scaled 0.02
               scene ({})
@@ -47,9 +57,12 @@
                       -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
-                    :grid $ comp-grid-play $ decode-map-as (>> states :grid-play) (:: 'Map 'Tag 'Dynamic)
-                    :field $ comp-field-play $ decode-map-as (>> states :field-play) (:: 'Map 'Tag 'Dynamic)
-                    :trail $ comp-trail-play $ decode-map-as (>> states :trail-play) (:: 'Map 'Tag 'Dynamic)
+                    :grid $ comp-grid-play $ decode-map-as (>> states :grid-play)
+                      quote $ Map Tag Dynamic
+                    :field $ comp-field-play $ decode-map-as (>> states :field-play)
+                      quote $ Map Tag Dynamic
+                    :trail $ comp-trail-play $ decode-map-as (>> states :trail-play)
+                      quote $ Map Tag Dynamic
                     _ $ text $ {} (:depth 0.5) (:size 4) (:material material-object)
                       :text $ str "|Unknown tab " tab
                       :position $ [] 0 0 0
@@ -71,7 +84,7 @@
                     {}
                       :a $ [] 0 0
                       :times 0
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 a $ as-number-list $ field state :a
                 times $ floor $ as-number (field state :times)
                 q $ quaternion
@@ -162,7 +175,7 @@
                 state $ decode-map-as
                   or (field states :data)
                     {} (:a 12) (:b 0.045) (:c 0)
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 a $ as-number $ field state :a
                 b $ as-number $ field state :b
                 c $ as-number $ field state :c
@@ -288,7 +301,7 @@
                     {}
                       :a $ [] 0 0
                       :times 0
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 a $ as-number-list $ field state :a
                 times $ floor $ as-number (field state :times)
                 q $ quaternion
@@ -384,12 +397,11 @@
               (:none) nil
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) Tag (-> Dynamic)
-        'join-children $ %{} 'CodeEntry
-          :doc "|Join ordered virtual children, which may mix Shape and Component values; preserve the renderer's heterogeneous List<Dynamic> boundary without unchecked casts."
+        'join-children $ %{} 'CodeEntry (:doc "|保持左右顺序合并本示例的 Component/Shape 子节点，不接受任意非节点数据。")
           :code $ quote $ defn join-children (left right) (concat left right)
           :examples $ []
-          :schema $ quote $ Fn (List Dynamic) (List Dynamic)
-            -> $ List Dynamic
+          :schema $ quote $ Fn (List app.comp.container/SceneChild) (List app.comp.container/SceneChild)
+            -> $ List app.comp.container/SceneChild
         'left-times $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn left-times (n m q q' v)
             if (<= n 0)
@@ -420,7 +432,7 @@
             map seed $ fn (k)
               CubePoint :position
                 &q* (quaternion unit 0 0 0) (quaternion 0 i j k)
-                , :color $ as-number $ hslx
+                , :color $ hslx
                   +
                     * (/ i 12) 360
                     , 180
@@ -437,17 +449,17 @@
           :code $ quote $ def material-line
             {} (:kind :line-basic) (:color 0xaaaaff) (:opacity 0.9) (:transparent true)
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote $ Map Tag app.comp.container/MaterialValue
         'material-mesh-line $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-mesh-line
             {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 0.8) (:depthTest true) (:lineWidth 0.01) (:transparent true)
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote $ Map Tag app.comp.container/MaterialValue
         'material-object $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-object
             {} (:kind :mesh-lambert) (:color 0xafdff5) (:opacity 1) (:transparent false)
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote $ Map Tag app.comp.container/MaterialValue
         'q-position $ %{} 'CodeEntry
           :doc "|Extract xyz as a Calcit List for Quatrefoil positions and mesh-line points; q-to-js produces a JavaScript xyzw array, which is not the renderer data contract."
           :code $ quote $ defn q-position (value)
@@ -456,7 +468,7 @@
               [] x y z
           :examples $ []
           :schema $ quote $ Fn quaternion.core/Quaternion
-            -> $ List Number
+            -> $ Tuple Number Number Number
           :tests $ [] $ %{} 'TestEntry (:name |renderer-position-is-calcit-xyz-list)
             :code $ quote $ assert= ([] 1 2 3)
               q-position $ quaternion 0 1 2 3
