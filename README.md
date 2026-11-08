@@ -3,9 +3,9 @@ Play Quaternion Grid
 
 四元数乘法变换可视化。Demo: http://r.tiye.me/Quatrefoil-GL/play-quaternion-grid/
 
-### Calcit 0.37.0 使用说明
+### Calcit 0.38.0 使用说明
 
-使用正式 Calcit 与 `@calcit/procs` 0.37.0、Quatrefoil 0.3.4 和 Touch Control 0.0.39。升级后重新安装依赖并构建。数值和标签回调使用 List<Tag> 路径，现有节点和材质 union 保留。原 q-position 测试通过。实际 WebGL 画面尚未复验。
+使用正式 Calcit 与 `@calcit/procs` 0.38.0、Quatrefoil 0.3.4 和 Touch Control 0.0.39。升级后请重新安装依赖并构建。Grid、Field、Trail 的控件默认值、状态路径和几何公式保持原合同。控件数据经一次解码得到具名记录。
 
 ### 历史：0.34.2 迁移
 
