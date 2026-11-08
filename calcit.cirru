@@ -14,6 +14,10 @@
           :code $ quote $ defstruct CubePoint (:position quaternion.core/Quaternion) (:color Number)
           :examples $ []
           :schema $ quote StructDef
+        'GridControls $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct GridControls (:a Number) (:b Number) (:c Number)
+          :examples $ []
+          :schema $ quote StructDef
         'MaterialValue $ %{} 'CodeEntry
           :doc "|本示例材质 Map 中的实际值域：种类 Tag、数值颜色/透明度、Bool 开关；不代表库的全部材质 API。"
           :code $ quote $ defunion MaterialValue Tag Number Bool
@@ -23,17 +27,12 @@
           :code $ quote $ defunion SceneChild quatrefoil.schema/Component quatrefoil.schema/Shape
           :examples $ []
           :schema $ quote UnionDef
-        'as-number $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-number (value) (decode-map-as value 'Number)
+        'VectorControls $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct VectorControls
+            :a $ List Number
+            :times Number
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Number) (:features :js-ffi)
-        'as-number-list $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn as-number-list (value)
-            decode-map-as value $ List Number
-          :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ List Number
-            :features :js-ffi
+          :schema $ quote StructDef
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
@@ -97,16 +96,12 @@
                         :a $ [] 0 0
                         :times 0
                   Map Tag Dynamic
-                a $ as-number-list $ .unwrap (get state :a)
-                times $ floor $ as-number
-                  .unwrap $ get state :times
+                controls $ decode-map-as state app.comp.container/VectorControls
+                a $ :a controls
+                times $ floor $ :times controls
                 q $ quaternion
-                  as-number $
-                    nth a 1
-                    , .unwrap
-                  as-number $
-                    nth a 0
-                    , .unwrap
+                  .unwrap $ nth a 1
+                  .unwrap $ nth a 0
                   , 0 0
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
@@ -115,7 +110,7 @@
                   {} $ :position $ [] 30 0 0
                   comp-value
                     {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label |times) (:fract-length 1)
-                      :value $ .unwrap $ get state :times
+                      :value $ :times controls
                       :position $ [] 40 10 0
                       :bound $ [] 0 100
                     fn (v d!)
@@ -194,9 +189,10 @@
                     (:none)
                       {} (:a 12) (:b 0.045) (:c 0)
                   Map Tag Dynamic
-                a $ as-number $ .unwrap (get state :a)
-                b $ as-number $ .unwrap (get state :b)
-                c $ as-number $ .unwrap (get state :c)
+                controls $ decode-map-as state app.comp.container/GridControls
+                a $ :a controls
+                b $ :b controls
+                c $ :c controls
                 unit 6
                 size 16
                 left-p $ [] 110 60 50
@@ -327,16 +323,12 @@
                         :a $ [] 0 0
                         :times 0
                   Map Tag Dynamic
-                a $ as-number-list $ .unwrap (get state :a)
-                times $ floor $ as-number
-                  .unwrap $ get state :times
+                controls $ decode-map-as state app.comp.container/VectorControls
+                a $ :a controls
+                times $ floor $ :times controls
                 q $ quaternion
-                  as-number $
-                    nth a 1
-                    , .unwrap
-                  as-number $
-                    nth a 0
-                    , .unwrap
+                  .unwrap $ nth a 1
+                  .unwrap $ nth a 0
                   , 0 0
               group ({})
                 point-light $ {} (:color 0xffff55) (:intensity 2) (:distance 200)
@@ -345,7 +337,7 @@
                   {} $ :position $ [] 30 0 0
                   comp-value
                     {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label |times) (:fract-length 1)
-                      :value $ .unwrap $ get state :times
+                      :value $ :times controls
                       :position $ [] 40 10 0
                       :bound $ [] 0 100
                     fn (v d!)
