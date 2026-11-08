@@ -29,7 +29,7 @@
           :schema $ quote $ Fn Dynamic (-> Number) (:features :js-ffi)
         'as-number-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn as-number-list (value)
-            decode-map-as value $ quote $ List Number
+            decode-map-as value $ List Number
           :examples $ []
           :schema $ quote $ Fn Dynamic
             -> $ List Number
@@ -37,14 +37,22 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
-                states $ decode-map-as (field store :states)
-                  quote $ Map Tag Dynamic
-                cursor $ field states :cursor
+                states $ decode-map-as
+                  .unwrap $ get store :states
+                  Map Tag Dynamic
+                cursor $ decode-map-as
+                  .unwrap $ get states :cursor
+                  List Tag
                 state $ decode-map-as
-                  either (field states :data)
-                    {} $ :tab :field
-                  quote $ Map Tag Dynamic
-                tab $ decode-map-as (field state :tab) 'Tag
+                  match (get states :data)
+                    (:some raw)
+                      either raw $ {} $ :tab :field
+                    (:none)
+                      {} $ :tab :field
+                  Map Tag Dynamic
+                tab $ decode-map-as
+                  .unwrap $ get state :tab
+                  , 'Tag
                 scaled 0.02
               scene ({})
                 group
@@ -53,16 +61,13 @@
                     :position $ [] -0.5 1.2 -0.6
                   comp-tabs tab $ fn (t d!)
                     hint-fn $ Fn Tag
-                      Fn Dynamic Dynamic $ -> Unit
+                      Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                       -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
-                    :grid $ comp-grid-play $ decode-map-as (>> states :grid-play)
-                      quote $ Map Tag Dynamic
-                    :field $ comp-field-play $ decode-map-as (>> states :field-play)
-                      quote $ Map Tag Dynamic
-                    :trail $ comp-trail-play $ decode-map-as (>> states :trail-play)
-                      quote $ Map Tag Dynamic
+                    :grid $ comp-grid-play $ decode-map-as (>> states :grid-play) (Map Tag Dynamic)
+                    :field $ comp-field-play $ decode-map-as (>> states :field-play) (Map Tag Dynamic)
+                    :trail $ comp-trail-play $ decode-map-as (>> states :trail-play) (Map Tag Dynamic)
                     _ $ text $ {} (:depth 0.5) (:size 4) (:material material-object)
                       :text $ str "|Unknown tab " tab
                       :position $ [] 0 0 0
@@ -78,15 +83,23 @@
         'comp-field-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-field-play (states)
             let
-                cursor $ field states :cursor
+                cursor $ decode-map-as
+                  .unwrap $ get states :cursor
+                  List Tag
                 state $ decode-map-as
-                  or (field states :data)
-                    {}
-                      :a $ [] 0 0
-                      :times 0
-                  quote $ Map Tag Dynamic
-                a $ as-number-list $ field state :a
-                times $ floor $ as-number (field state :times)
+                  match (get states :data)
+                    (:some raw)
+                      or raw $ {}
+                        :a $ [] 0 0
+                        :times 0
+                    (:none)
+                      {}
+                        :a $ [] 0 0
+                        :times 0
+                  Map Tag Dynamic
+                a $ as-number-list $ .unwrap (get state :a)
+                times $ floor $ as-number
+                  .unwrap $ get state :times
                 q $ quaternion
                   as-number $
                     nth a 1
@@ -102,12 +115,12 @@
                   {} $ :position $ [] 30 0 0
                   comp-value
                     {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label |times) (:fract-length 1)
-                      :value $ field state :times
+                      :value $ .unwrap $ get state :times
                       :position $ [] 40 10 0
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -119,7 +132,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -132,7 +145,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -148,7 +161,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -171,14 +184,19 @@
         'comp-grid-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-grid-play (states)
             let
-                cursor $ field states :cursor
+                cursor $ decode-map-as
+                  .unwrap $ get states :cursor
+                  List Tag
                 state $ decode-map-as
-                  or (field states :data)
-                    {} (:a 12) (:b 0.045) (:c 0)
-                  quote $ Map Tag Dynamic
-                a $ as-number $ field state :a
-                b $ as-number $ field state :b
-                c $ as-number $ field state :c
+                  match (get states :data)
+                    (:some raw)
+                      or raw $ {} (:a 12) (:b 0.045) (:c 0)
+                    (:none)
+                      {} (:a 12) (:b 0.045) (:c 0)
+                  Map Tag Dynamic
+                a $ as-number $ .unwrap (get state :a)
+                b $ as-number $ .unwrap (get state :b)
+                c $ as-number $ .unwrap (get state :c)
                 unit 6
                 size 16
                 left-p $ [] 110 60 50
@@ -199,7 +217,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn Dynamic Dynamic $ -> Unit
+                          Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :a v
                     comp-value
@@ -207,7 +225,7 @@
                         :bound $ [] 0 1
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn Dynamic Dynamic $ -> Unit
+                          Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :b v
                     comp-value
@@ -215,7 +233,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn Dynamic Dynamic $ -> Unit
+                          Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :c v
                     sphere $ {} (:radius 1)
@@ -276,7 +294,7 @@
                       :event $ {} $ :click
                         fn (e d!)
                           hint-fn $ Fn Dynamic
-                            Fn Dynamic Dynamic $ -> Unit
+                            Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                             -> Unit
                           on-change tab d!
                     text $ {}
@@ -288,22 +306,30 @@
           :examples $ []
           :schema $ quote $ Fn Tag
             Fn Tag
-              Fn Dynamic Dynamic $ -> Unit
+              Fn (List Tag) (Map Tag Dynamic) (-> Unit)
               -> Unit
             -> quatrefoil.schema/Shape
             :features :js-ffi
         'comp-trail-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-trail-play (states)
             let
-                cursor $ field states :cursor
+                cursor $ decode-map-as
+                  .unwrap $ get states :cursor
+                  List Tag
                 state $ decode-map-as
-                  or (field states :data)
-                    {}
-                      :a $ [] 0 0
-                      :times 0
-                  quote $ Map Tag Dynamic
-                a $ as-number-list $ field state :a
-                times $ floor $ as-number (field state :times)
+                  match (get states :data)
+                    (:some raw)
+                      or raw $ {}
+                        :a $ [] 0 0
+                        :times 0
+                    (:none)
+                      {}
+                        :a $ [] 0 0
+                        :times 0
+                  Map Tag Dynamic
+                a $ as-number-list $ .unwrap (get state :a)
+                times $ floor $ as-number
+                  .unwrap $ get state :times
                 q $ quaternion
                   as-number $
                     nth a 1
@@ -319,12 +345,12 @@
                   {} $ :position $ [] 30 0 0
                   comp-value
                     {} (:speed 0.5) (:color 0xccaaff) (:show-text? true) (:label |times) (:fract-length 1)
-                      :value $ field state :times
+                      :value $ .unwrap $ get state :times
                       :position $ [] 40 10 0
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -336,7 +362,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -349,7 +375,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -365,7 +391,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn Dynamic Dynamic $ -> Unit
+                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -390,13 +416,6 @@
                             :color $ :color p
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
-        'field $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn field (value key)
-            match (get value key)
-              (:some option-value) option-value
-              (:none) nil
-          :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) Tag (-> Dynamic)
         'join-children $ %{} 'CodeEntry (:doc "|保持左右顺序合并本示例的 Component/Shape 子节点，不接受任意非节点数据。")
           :code $ quote $ defn join-children (left right) (concat left right)
           :examples $ []
@@ -525,7 +544,7 @@
           :schema $ quote $ Ref (Map Tag Dynamic)
         'MobileDetectHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait MobileDetectHost
-            .mobile? $ quote $ Fn app.main/MobileDetectHost (-> Bool)
+            .mobile? $ Fn app.main/MobileDetectHost $ -> Bool
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :mobile? |mobile
