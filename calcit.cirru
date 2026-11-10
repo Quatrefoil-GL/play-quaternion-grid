@@ -14,6 +14,10 @@
           :code $ quote $ defstruct CubePoint (:position quaternion.core/Quaternion) (:color Number)
           :examples $ []
           :schema $ quote StructDef
+        'GridControlValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion GridControlValue Number Tag (List Number)
+          :examples $ []
+          :schema $ quote UnionDef
         'GridControls $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct GridControls (:a Number) (:b Number) (:c Number)
           :examples $ []
@@ -48,7 +52,7 @@
                       either raw $ {} $ :tab :field
                     (:none)
                       {} $ :tab :field
-                  Map Tag Dynamic
+                  Map Tag app.comp.container/GridControlValue
                 tab $ decode-map-as
                   .unwrap $ get state :tab
                   , 'Tag
@@ -60,7 +64,7 @@
                     :position $ [] -0.5 1.2 -0.6
                   comp-tabs tab $ fn (t d!)
                     hint-fn $ Fn Tag
-                      Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                      Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                       -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
@@ -95,7 +99,7 @@
                       {}
                         :a $ [] 0 0
                         :times 0
-                  Map Tag Dynamic
+                  Map Tag app.comp.container/GridControlValue
                 controls $ decode-map-as state app.comp.container/VectorControls
                 a $ :a controls
                 times $ floor $ :times controls
@@ -115,7 +119,7 @@
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -127,7 +131,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -140,7 +144,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -156,7 +160,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -188,7 +192,7 @@
                       or raw $ {} (:a 12) (:b 0.045) (:c 0)
                     (:none)
                       {} (:a 12) (:b 0.045) (:c 0)
-                  Map Tag Dynamic
+                  Map Tag app.comp.container/GridControlValue
                 controls $ decode-map-as state app.comp.container/GridControls
                 a $ :a controls
                 b $ :b controls
@@ -213,7 +217,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :a v
                     comp-value
@@ -221,7 +225,7 @@
                         :bound $ [] 0 1
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :b v
                     comp-value
@@ -229,7 +233,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :c v
                     sphere $ {} (:radius 1)
@@ -290,7 +294,7 @@
                       :event $ {} $ :click
                         fn (e d!)
                           hint-fn $ Fn Dynamic
-                            Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                            Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                             -> Unit
                           on-change tab d!
                     text $ {}
@@ -302,7 +306,7 @@
           :examples $ []
           :schema $ quote $ Fn Tag
             Fn Tag
-              Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+              Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
               -> Unit
             -> quatrefoil.schema/Shape
             :features :js-ffi
@@ -322,7 +326,7 @@
                       {}
                         :a $ [] 0 0
                         :times 0
-                  Map Tag Dynamic
+                  Map Tag app.comp.container/GridControlValue
                 controls $ decode-map-as state app.comp.container/VectorControls
                 a $ :a controls
                 times $ floor $ :times controls
@@ -342,7 +346,7 @@
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -354,7 +358,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -367,7 +371,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -383,7 +387,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag Dynamic) (-> Unit)
+                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -547,8 +551,17 @@
             if (list? op)
               recur :states $ [] op op-data
               let
-                  store $ updater @*store op op-data
-                ; js/console.log |Dispatch: op op-data store
+                  store $ if (= op :states)
+                    let
+                        args $ decode-map-as op-data $ List Dynamic
+                        path $ decode-map-as
+                          .unwrap $ nth args 0
+                          List Tag
+                        state $ decode-map-as
+                          .unwrap $ nth args 1
+                          Map Tag app.comp.container/GridControlValue
+                      updater @*store path state
+                    , @*store
                 reset! *store store
                 , &unit
           :examples $ []
@@ -620,12 +633,10 @@
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn updater (store op op-data)
-            match op
-              :states $ update-states store op-data
-              _ store
+          :code $ quote $ defn updater (store path state)
+            update-states store $ [] path state
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) Dynamic Dynamic
+          :schema $ quote $ Fn (Map Tag Dynamic) (List Tag) (Map Tag app.comp.container/GridControlValue)
             -> $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
