@@ -306,7 +306,7 @@
           :examples $ []
           :schema $ quote $ Fn Tag
             Fn Tag
-              Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+              Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
               -> Unit
             -> quatrefoil.schema/Shape
             :features :js-ffi
@@ -415,8 +415,8 @@
         'join-children $ %{} 'CodeEntry (:doc "|保持左右顺序合并本示例的 Component/Shape 子节点，不接受任意非节点数据。")
           :code $ quote $ defn join-children (left right) (concat left right)
           :examples $ []
-          :schema $ quote $ Fn (List app.comp.container/SceneChild) (List app.comp.container/SceneChild)
-            -> $ List app.comp.container/SceneChild
+          :schema $ quote $ Fn (List SceneChild) (List SceneChild)
+            -> $ List SceneChild
         'left-times $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn left-times (n m q q' v)
             if (<= n 0)
@@ -431,7 +431,7 @@
               make-cube-row seed unit i j
           :examples $ []
           :schema $ quote $ Fn (List Number) Number Number
-            -> $ List app.comp.container/CubePoint
+            -> $ List CubePoint
         'make-cube-points $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-points (size unit)
             let
@@ -441,7 +441,7 @@
                 make-cube-plane seed unit i
           :examples $ []
           :schema $ quote $ Fn Number Number
-            -> $ List app.comp.container/CubePoint
+            -> $ List CubePoint
         'make-cube-row $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-row (seed unit i j)
             map seed $ fn (k)
@@ -459,22 +459,22 @@
                     , 70
           :examples $ []
           :schema $ quote $ Fn (List Number) Number Number Number
-            -> $ List app.comp.container/CubePoint
+            -> $ List CubePoint
         'material-line $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-line
             {} (:kind :line-basic) (:color 0xaaaaff) (:opacity 0.9) (:transparent true)
           :examples $ []
-          :schema $ quote $ Map Tag app.comp.container/MaterialValue
+          :schema $ quote $ Map Tag MaterialValue
         'material-mesh-line $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-mesh-line
             {} (:kind :mesh-line) (:color 0xaaaaff) (:opacity 0.8) (:depthTest true) (:lineWidth 0.01) (:transparent true)
           :examples $ []
-          :schema $ quote $ Map Tag app.comp.container/MaterialValue
+          :schema $ quote $ Map Tag MaterialValue
         'material-object $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def material-object
             {} (:kind :mesh-lambert) (:color 0xafdff5) (:opacity 1) (:transparent false)
           :examples $ []
-          :schema $ quote $ Map Tag app.comp.container/MaterialValue
+          :schema $ quote $ Map Tag MaterialValue
         'q-position $ %{} 'CodeEntry
           :doc "|Extract xyz as a Calcit List for Quatrefoil positions and mesh-line points; q-to-js produces a JavaScript xyzw array, which is not the renderer data contract."
           :code $ quote $ defn q-position (value)
@@ -548,24 +548,25 @@
           :tags $ #{} :ffi :js-host
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op op-data)
-            if (list? op)
-              recur :states $ [] op op-data
-              let
-                  store $ if (= op :states)
-                    let
-                        args $ decode-map-as op-data $ List Dynamic
-                        path $ decode-map-as
-                          .unwrap $ nth args 0
-                          List Tag
-                        state $ decode-map-as
-                          .unwrap $ nth args 1
-                          Map Tag app.comp.container/GridControlValue
-                      updater @*store path state
-                    , @*store
-                reset! *store store
-                , &unit
+            reset! *store $ cond
+                list? op
+                updater @*store
+                  decode-map-as op $ List Tag
+                  decode-map-as op-data $ Map Tag app.comp.container/GridControlValue
+              (and (tag? op) (= op :states))
+                let
+                    args $ decode-map-as op-data $ List Dynamic
+                    path $ decode-map-as
+                      .unwrap $ nth args 0
+                      List Tag
+                    state $ decode-map-as
+                      .unwrap $ nth args 1
+                      Map Tag app.comp.container/GridControlValue
+                  updater @*store path state
+              true @*store
+            , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic Dynamic (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn Action Payload (-> Unit) (:generics Action Payload) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             when dev? (load-console-formatter!) (println "|Run in dev mode")
