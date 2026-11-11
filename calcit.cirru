@@ -10,6 +10,12 @@
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
+        'ControlBranch $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct ControlBranch
+            :cursor $ List Tag
+            :data $ Map Tag GridControlValue
+          :examples $ []
+          :schema $ quote StructDef
         'CubePoint $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct CubePoint (:position quaternion.core/Quaternion) (:color Number)
           :examples $ []
@@ -68,9 +74,16 @@
                       -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
-                    :grid $ comp-grid-play $ decode-map-as (>> states :grid-play) (Map Tag Dynamic)
-                    :field $ comp-field-play $ decode-map-as (>> states :field-play) (Map Tag Dynamic)
-                    :trail $ comp-trail-play $ decode-map-as (>> states :trail-play) (Map Tag Dynamic)
+                    :grid $ comp-grid-play $ read-control-branch states :grid-play
+                      {} (:a 12) (:b 0.045) (:c 0)
+                    :field $ comp-field-play $ read-control-branch states :field-play
+                      {}
+                        :a $ [] 0 0
+                        :times 0
+                    :trail $ comp-trail-play $ read-control-branch states :trail-play
+                      {}
+                        :a $ [] 0 0
+                        :times 0
                     _ $ text $ {} (:depth 0.5) (:size 4) (:material material-object)
                       :text $ str "|Unknown tab " tab
                       :position $ [] 0 0 0
@@ -86,20 +99,8 @@
         'comp-field-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-field-play (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  List Tag
-                state $ decode-map-as
-                  match (get states :data)
-                    (:some raw)
-                      or raw $ {}
-                        :a $ [] 0 0
-                        :times 0
-                    (:none)
-                      {}
-                        :a $ [] 0 0
-                        :times 0
-                  Map Tag app.comp.container/GridControlValue
+                cursor $ :cursor states
+                state $ :data states
                 controls $ decode-map-as state app.comp.container/VectorControls
                 a $ :a controls
                 times $ floor $ :times controls
@@ -179,20 +180,12 @@
                         :position $ q-position $ rotate-times (:position p) q times
                         :material $ assoc material-object :color $ :color p
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
+          :schema $ quote $ Fn ControlBranch (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'comp-grid-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-grid-play (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  List Tag
-                state $ decode-map-as
-                  match (get states :data)
-                    (:some raw)
-                      or raw $ {} (:a 12) (:b 0.045) (:c 0)
-                    (:none)
-                      {} (:a 12) (:b 0.045) (:c 0)
-                  Map Tag app.comp.container/GridControlValue
+                cursor $ :cursor states
+                state $ :data states
                 controls $ decode-map-as state app.comp.container/GridControls
                 a $ :a controls
                 b $ :b controls
@@ -276,7 +269,7 @@
                                   :scale $ [] 1 1 1
                                   :material $ assoc material-mesh-line :color $ hslx (* level 60) 50 60
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
+          :schema $ quote $ Fn ControlBranch (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'comp-tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-tabs (selected-tab on-change)
             quatrefoil.alias/create-element :group
@@ -313,20 +306,8 @@
         'comp-trail-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-trail-play (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  List Tag
-                state $ decode-map-as
-                  match (get states :data)
-                    (:some raw)
-                      or raw $ {}
-                        :a $ [] 0 0
-                        :times 0
-                    (:none)
-                      {}
-                        :a $ [] 0 0
-                        :times 0
-                  Map Tag app.comp.container/GridControlValue
+                cursor $ :cursor states
+                state $ :data states
                 controls $ decode-map-as state app.comp.container/VectorControls
                 a $ :a controls
                 times $ floor $ :times controls
@@ -411,7 +392,7 @@
                           :material $ merge material-mesh-line $ {}
                             :color $ :color p
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Shape) (:features :js-ffi)
+          :schema $ quote $ Fn ControlBranch (-> quatrefoil.schema/Shape) (:features :js-ffi)
         'join-children $ %{} 'CodeEntry (:doc "|保持左右顺序合并本示例的 Component/Shape 子节点，不接受任意非节点数据。")
           :code $ quote $ defn join-children (left right) (concat left right)
           :examples $ []
@@ -493,6 +474,21 @@
           :examples $ []
           :schema $ quote $ Fn Number
             -> $ List Number
+        'read-control-branch $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn read-control-branch (states branch defaults)
+            let
+                raw-states $ decode-map-as (>> states branch) (Map Tag Dynamic)
+                cursor $ decode-map-as
+                  .unwrap $ get raw-states :cursor
+                  List Tag
+                data $ decode-map-as
+                  match (get raw-states :data)
+                    (:some raw) (or raw defaults)
+                    (:none) defaults
+                  Map Tag GridControlValue
+              ControlBranch :cursor cursor :data data
+          :examples $ []
+          :schema $ quote $ Fn (Map Tag S) Tag (Map Tag GridControlValue) (-> ControlBranch) (:generics S)
         'rotate-times $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rotate-times (start q times)
             if (<= times 0) start $ rotate-times (&q* start q) q $ dec times
