@@ -70,7 +70,7 @@
                     :position $ [] -0.5 1.2 -0.6
                   comp-tabs tab $ fn (t d!)
                     hint-fn $ Fn Tag
-                      Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                      Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                       -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
@@ -120,7 +120,7 @@
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -132,7 +132,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -145,7 +145,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -161,7 +161,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -210,7 +210,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :a v
                     comp-value
@@ -218,7 +218,7 @@
                         :bound $ [] 0 1
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :b v
                     comp-value
@@ -226,7 +226,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :c v
                     sphere $ {} (:radius 1)
@@ -286,8 +286,8 @@
                         :transparent true
                       :event $ {} $ :click
                         fn (e d!)
-                          hint-fn $ Fn Dynamic
-                            Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          hint-fn $ Fn js-ffi.browser/MouseEventHost
+                            Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                             -> Unit
                           on-change tab d!
                     text $ {}
@@ -327,7 +327,7 @@
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -339,7 +339,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -352,7 +352,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -368,7 +368,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -408,7 +408,7 @@
         'make-cube-plane $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-plane (seed unit i)
             mapcat seed $ fn (j)
-              hint-fn $ Fn Number $ -> (List app.comp.container/CubePoint)
+              hint-fn $ Fn Number $ -> (List CubePoint)
               make-cube-row seed unit i j
           :examples $ []
           :schema $ quote $ Fn (List Number) Number Number
@@ -418,7 +418,7 @@
             let
                 seed $ range-around size
               mapcat seed $ fn (i)
-                hint-fn $ Fn Number $ -> (List app.comp.container/CubePoint)
+                hint-fn $ Fn Number $ -> (List CubePoint)
                 make-cube-plane seed unit i
           :examples $ []
           :schema $ quote $ Fn Number Number
