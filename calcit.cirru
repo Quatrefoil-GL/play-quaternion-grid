@@ -16,6 +16,12 @@
             :data $ Map Tag GridControlValue
           :examples $ []
           :schema $ quote StructDef
+        'ControlTree $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct ControlTree
+            :children $ Map Tag ControlTree
+            :data $ Option $ Map Tag GridControlValue
+          :examples $ []
+          :schema $ quote StructDef
         'CubePoint $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct CubePoint (:position quaternion.core/Quaternion) (:color Number)
           :examples $ []
@@ -46,19 +52,9 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
-                states $ decode-map-as
-                  .unwrap $ get store :states
-                  Map Tag Dynamic
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  List Tag
-                state $ decode-map-as
-                  match (get states :data)
-                    (:some raw)
-                      either raw $ {} $ :tab :field
-                    (:none)
-                      {} $ :tab :field
-                  Map Tag app.comp.container/GridControlValue
+                cursor $ []
+                state $ .unwrap-or (:data store)
+                  {} $ :tab :field
                 tab $ decode-map-as
                   .unwrap $ get state :tab
                   , 'Tag
@@ -70,17 +66,17 @@
                     :position $ [] -0.5 1.2 -0.6
                   comp-tabs tab $ fn (t d!)
                     hint-fn $ Fn Tag
-                      Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                      Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                       -> Unit
                     d! cursor $ assoc state :tab t
                   match tab
-                    :grid $ comp-grid-play $ read-control-branch states :grid-play
+                    :grid $ comp-grid-play $ read-control-branch store :grid-play
                       {} (:a 12) (:b 0.045) (:c 0)
-                    :field $ comp-field-play $ read-control-branch states :field-play
+                    :field $ comp-field-play $ read-control-branch store :field-play
                       {}
                         :a $ [] 0 0
                         :times 0
-                    :trail $ comp-trail-play $ read-control-branch states :trail-play
+                    :trail $ comp-trail-play $ read-control-branch store :trail-play
                       {}
                         :a $ [] 0 0
                         :times 0
@@ -95,7 +91,7 @@
                   ; point-light $ {} (:color 0xffffff) (:intensity 5) (:distance 200)
                     :position $ [] 0 60 0
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> quatrefoil.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn ControlTree (-> quatrefoil.schema/Component) (:features :js-ffi)
         'comp-field-play $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-field-play (states)
             let
@@ -120,7 +116,7 @@
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -132,7 +128,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -145,7 +141,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -161,7 +157,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -210,7 +206,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :a v
                     comp-value
@@ -218,7 +214,7 @@
                         :bound $ [] 0 1
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :b v
                     comp-value
@@ -226,7 +222,7 @@
                         :bound $ [] 0 20
                       fn (v d!)
                         hint-fn $ Fn Number
-                          Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                           -> Unit
                         d! cursor $ assoc state :c v
                     sphere $ {} (:radius 1)
@@ -286,8 +282,8 @@
                         :transparent true
                       :event $ {} $ :click
                         fn (e d!)
-                          hint-fn $ Fn Dynamic
-                            Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                          hint-fn $ Fn js-ffi.browser/MouseEventHost
+                            Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                             -> Unit
                           on-change tab d!
                     text $ {}
@@ -327,7 +323,7 @@
                       :bound $ [] 0 100
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :times v
                   comp-value
@@ -339,7 +335,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ [] v
                         (last a) .unwrap
@@ -352,7 +348,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       d! cursor $ assoc state :a $ []
                           first a
@@ -368,7 +364,7 @@
                       :bound $ [] -20 20
                     fn (v d!)
                       hint-fn $ Fn Number
-                        Fn (List Tag) (Map Tag app.comp.container/GridControlValue) (-> Unit)
+                        Fn (List Tag) (Map Tag GridControlValue) (-> Unit)
                         -> Unit
                       let
                           length $ q-length q
@@ -393,6 +389,11 @@
                             :color $ :color p
           :examples $ []
           :schema $ quote $ Fn ControlBranch (-> quatrefoil.schema/Shape) (:features :js-ffi)
+        'empty-control-tree $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def empty-control-tree
+            ControlTree :children ({}) :data None
+          :examples $ []
+          :schema $ quote ControlTree
         'join-children $ %{} 'CodeEntry (:doc "|保持左右顺序合并本示例的 Component/Shape 子节点，不接受任意非节点数据。")
           :code $ quote $ defn join-children (left right) (concat left right)
           :examples $ []
@@ -408,7 +409,7 @@
         'make-cube-plane $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn make-cube-plane (seed unit i)
             mapcat seed $ fn (j)
-              hint-fn $ Fn Number $ -> (List app.comp.container/CubePoint)
+              hint-fn $ Fn Number $ -> (List CubePoint)
               make-cube-row seed unit i j
           :examples $ []
           :schema $ quote $ Fn (List Number) Number Number
@@ -418,7 +419,7 @@
             let
                 seed $ range-around size
               mapcat seed $ fn (i)
-                hint-fn $ Fn Number $ -> (List app.comp.container/CubePoint)
+                hint-fn $ Fn Number $ -> (List CubePoint)
                 make-cube-plane seed unit i
           :examples $ []
           :schema $ quote $ Fn Number Number
@@ -475,20 +476,14 @@
           :schema $ quote $ Fn Number
             -> $ List Number
         'read-control-branch $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn read-control-branch (states branch defaults)
+          :code $ quote $ defn read-control-branch (store branch defaults)
             let
-                raw-states $ decode-map-as (>> states branch) (Map Tag Dynamic)
-                cursor $ decode-map-as
-                  .unwrap $ get raw-states :cursor
-                  List Tag
-                data $ decode-map-as
-                  match (get raw-states :data)
-                    (:some raw) (or raw defaults)
-                    (:none) defaults
-                  Map Tag GridControlValue
-              ControlBranch :cursor cursor :data data
+                child $ .unwrap-or
+                  get (:children store) branch
+                  , empty-control-tree
+              ControlBranch :cursor ([] branch) :data $ .unwrap-or (:data child) defaults
           :examples $ []
-          :schema $ quote $ Fn (Map Tag S) Tag (Map Tag GridControlValue) (-> ControlBranch) (:generics S)
+          :schema $ quote $ Fn ControlTree Tag (Map Tag GridControlValue) (-> ControlBranch)
         'rotate-times $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rotate-times (start q times)
             if (<= times 0) start $ rotate-times (&q* start q) q $ dec times
@@ -512,7 +507,7 @@
         :code $ quote $ ns app.comp.container
           :require
             quatrefoil.alias :refer $ group box sphere point-light ambient-light perspective-camera scene text spline mesh-line
-            quatrefoil.core :refer $ defcomp >> hslx
+            quatrefoil.core :refer $ defcomp hslx
             quatrefoil.comp.control :refer $ comp-value comp-value-2d
             quaternion.core :refer $ &q* q* q-length quaternion
     'app.config $ %{} 'FileEntry
@@ -529,11 +524,9 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defref *store
-            {} $ :states $ {}
-              :cursor $ []
+          :code $ quote $ defref *store app.comp.container/empty-control-tree
           :examples $ []
-          :schema $ quote $ Ref (Map Tag Dynamic)
+          :schema $ quote $ Ref app.comp.container/ControlTree
         'MobileDetectHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait MobileDetectHost
             .mobile? $ Fn app.main/MobileDetectHost $ -> Bool
@@ -625,10 +618,39 @@
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store path state)
-            update-states store $ [] path state
+            match (first path)
+              (:none)
+                assoc store :data $ Some state
+              (:some key)
+                let
+                    children $ :children store
+                    child $ .unwrap-or (get children key) app.comp.container/empty-control-tree
+                  assoc store :children $ assoc children key $ updater child (rest path) state
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (List Tag) (Map Tag app.comp.container/GridControlValue)
-            -> $ Map Tag Dynamic
+          :schema $ quote $ Fn app.comp.container/ControlTree (List Tag) (Map Tag app.comp.container/GridControlValue) (-> app.comp.container/ControlTree)
+          :tests $ [] $ %{} 'TestEntry (:name |preserves-root-and-nested-controls)
+            :code $ quote $ let
+                defaults $ {} $ :a 12
+                root $ updater app.comp.container/empty-control-tree ([])
+                  {} $ :tab :trail
+                grid $ updater root ([] :grid-play)
+                  {} $ :a 5
+                final-tree $ updater grid ([] :grid-play :extra)
+                  {} $ :a $ [] 2 3
+                branch $ app.comp.container/read-control-branch final-tree :grid-play defaults
+                extra $ .unwrap $ get
+                  :children $ .unwrap $ get (:children final-tree) :grid-play
+                  , :extra
+              assert=
+                Some $ {} $ :tab :trail
+                :data final-tree
+              assert= ([] :grid-play) (:cursor branch)
+              assert=
+                {} $ :a 5
+                :data branch
+              assert=
+                Some $ {} $ :a ([] 2 3)
+                :data extra
+              assert= defaults $ :data $ app.comp.container/read-control-branch final-tree :field-play defaults
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ quatrefoil.cursor :refer $ update-states
