@@ -5,7 +5,7 @@ Play Quaternion Grid
 
 ### Calcit 0.44.0 使用说明
 
-使用正式 Calcit 与 `@calcit/procs` 0.44.0、Quatrefoil 0.3.7、Pointed Prompt 0.0.30 和 Touch Control 0.0.43。升级后请重新安装依赖并构建。Grid、Field、Trail 的控件默认值、状态路径和几何公式保持原合同。控件数据经一次解码得到具名记录。
+使用正式 Calcit 与 `@calcit/procs` 0.44.0、Quatrefoil 0.3.8、Pointed Prompt 0.0.31 和 Touch Control 0.0.44。升级后请重新安装依赖并构建。Grid、Field、Trail 的控件默认值、状态路径和几何公式保持原合同。控件数据经一次解码得到具名记录。
 
 ### 历史：0.34.2 迁移
 
